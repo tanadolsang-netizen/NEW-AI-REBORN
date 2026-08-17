@@ -23,8 +23,8 @@ export default function Footer() {
   return (
     <footer ref={ref} className="border-t border-black/[0.06] bg-white">
       <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-[12px] text-black/45">{t('footer.rights').replace('{year}', year)}</div>
-        <div className="text-[12px] text-black/45">{t('footer.built')}</div>
+        <div className="text-[12px] text-black/45">{t('common.rights').replace('{year}', year)}</div>
+        <div className="text-[12px] text-black/45">{t('common.built')}</div>
       </div>
     </footer>
   );

@@ -102,6 +102,8 @@ const translations = {
     common: {
       loading: 'กำลังโหลด...',
       readMore: 'อ่านเพิ่มเติม',
+      rights: '© {year} ASTRAL. สงวนลิขสิทธิ์.',
+      built: 'สร้างด้วย ❤️ สำหรับผู้ propelled ด้วยดาว',
     },
   },
   en: {
