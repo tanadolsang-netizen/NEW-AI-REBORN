@@ -8,12 +8,12 @@ import { useLang } from '../i18n.jsx';
 gsap.registerPlugin(ScrollTrigger);
 
 const items = [
-  { title: 'Real ephemeris', desc: 'Offline-first ephemeris powered by JPL DE421 + skyfield. No reliance on external APIs.', icon: '✦' },
-  { title: 'Dual traditions', desc: 'Thai + Western astrology in one coherent system, not two disconnected tools.', icon: '◈' },
-  { title: 'FastAPI backend', desc: 'Vault scripts exposed as a typed REST layer with validation and graceful errors.', icon: '⬡' },
-  { title: 'Apple-style frontend', desc: '3D canvas, GSAP motion, glassmorphism, and responsive layout out of the box.', icon: '◇' },
-  { title: 'Auth & profiles', desc: 'Supabase auth with saved readings, history, and private journaling.', icon: '⊹' },
-  { title: 'Payments', desc: 'Subscriptions and credits via Stripe with transparent pricing.', icon: '⬢' },
+  { title: 'คำนวณดวงจริง', desc: 'คำนวณตำแหน่งดาวเคราะห์ออฟไลน์อย่างแม่นยำ', icon: '✦' },
+  { title: 'สองระบบในที่เดียว', desc: 'โหราศาสตร์ไทยและตะวันตก สมดุลกันอย่างเป็นธรรมชาติ', icon: '◈' },
+  { title: 'ดูแลบัญชีและข้อมูลส่วนตัว', desc: 'บันทึกการอ่านดวง รายการโน้ต และความเป็นส่วนตัว', icon: '⬡' },
+  { title: 'ติดตามชีวิตและพลังงาน', desc: 'บันทึกประจำวัน + ดูพลังงานที่เหมาะกับแต่ละช่วงเวลา', icon: '◇' },
+  { title: 'ชำระเงินอย่างปลอดภัย', desc: 'อัปเกรดแผน Pro อย่างมั่นใจ', icon: '⊹' },
+  { title: 'ใช้งานง่ายในมือถือ', desc: 'ออกแบบให้อ่านง่าย เร็ว และใช้งานได้ทุกสถานที่', icon: '⬢' },
 ];
 
 export default function Features() {

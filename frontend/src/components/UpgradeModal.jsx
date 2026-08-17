@@ -36,7 +36,7 @@ export default function UpgradeModal({ onClose }) {
       <div className="w-full max-w-md rounded-[28px] border border-white/10 bg-white/[0.04] p-7 shadow-[0_1px_0_rgba(255,255,255,0.06)]">
         <div className="flex items-center justify-between">
           <h3 className="text-[18px] font-semibold text-white">{t('upgrade.title')}</h3>
-          <button onClick={() => setIsUpgradeOpen(false)} className="text-white/60 hover:text-white text-[12px]">Close</button>
+          <button onClick={() => setIsUpgradeOpen(false)} className="text-white/60 hover:text-white text-[12px]">{t('auth.close')}</button>
         </div>
         <form onSubmit={submit} className="mt-5 grid gap-3">
           <select value={plan} onChange={(e) => setPlan(e.target.value)} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-[14px] text-white outline-none focus:border-white/25">
