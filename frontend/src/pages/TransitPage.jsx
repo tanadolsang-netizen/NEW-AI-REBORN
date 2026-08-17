@@ -3,14 +3,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useDailyTransitNotification } from '../hooks/useDailyTransitNotification';
+import { useLang } from '../i18n.jsx';
+import { api } from '../services/api.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function TransitPage() {
+  const { t } = useLang();
   const sectionRef = useRef(null);
   const bodyRef = useRef(null);
-  const { supported, subscribed, subscribe, unsubscribe } = useDailyTransitNotification();
   const [transits, setTransits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -24,54 +25,47 @@ export default function TransitPage() {
   }, []);
 
   useEffect(() => {
-    const base = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000';
-    const controller = new AbortController();
-    setLoading(true);
-    fetch(`${base}/v1/transit/now?lat=13.8591&lon=100.5217&tz=7`, { signal: controller.signal })
-      .then((r) => r.json())
-      .then((d) => { setTransits(Array.isArray(d) ? d : [d]); setLoading(false); })
-      .catch((e) => { if (e.name !== 'AbortError') { setError(e.message); setLoading(false); } });
-    return () => controller.abort();
+    let cancelled = false;
+    async function load() {
+      try {
+        const data = await api.transitNow({ lat: 13.8591, lon: 100.5217, tz: 7 });
+        if (!cancelled) {
+          setTransits(Array.isArray(data) ? data : [data]);
+          setLoading(false);
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setError(e.message);
+          setLoading(false);
+        }
+      }
+    }
+    load();
+    return () => { cancelled = true; };
   }, []);
 
   return (
-    <section id="transit" ref={sectionRef} className="py-28 bg-[#fbfbfd]">
-      <div className="mx-auto max-w-6xl px-6" ref={bodyRef}>
-        <div className="flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <h2 className="text-[36px] md:text-[44px] leading-[0.98] tracking-[-0.03em] font-semibold text-black">
-              Transit ปัจจุบัน
-            </h2>
-            <p className="mt-3 text-[16px] leading-[1.55] text-black/60">ตำแหน่งดาวเคราะห์現在/ไกล + overlay กับตำแหน่งกำเนิด</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={subscribe}
-              disabled={!supported || subscribed}
-              className="rounded-full bg-black px-5 py-2.5 text-[13px] font-medium text-white hover:bg-black/85 active:scale-[0.97] disabled:opacity-50 transition-all"
-            >
-              {subscribed ? 'แจ้งเตือนเปิดแล้ว' : 'เปิดแจ้งเตือน'}
-            </button>
-            <button
-              onClick={unsubscribe}
-              disabled={!subscribed}
-              className="rounded-full bg-white px-5 py-2.5 text-[13px] font-medium text-black border border-black/10 hover:bg-black/[0.03] active:scale-[0.97] disabled:opacity-50 transition-all"
-            >
-              ปิด
-            </button>
-          </div>
+    <section id="transit" ref={sectionRef} className="relative overflow-hidden py-28 bg-[#fbfbfd]">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-gradient-to-br from-sky-100/60 to-transparent blur-3xl" />
+        <div className="absolute -right-24 bottom-16 h-72 w-72 rounded-full bg-gradient-to-br from-emerald-100/60 to-transparent blur-3xl" />
+      </div>
+      <div className="relative mx-auto max-w-6xl px-6" ref={bodyRef}>
+        <div>
+          <div className="text-[11px] font-semibold tracking-widest text-black/45 uppercase mb-4">{t('transit.subtitle')}</div>
+          <h2 className="text-[36px] md:text-[44px] leading-[0.98] tracking-[-0.03em] font-semibold text-black">{t('transit.title')}</h2>
+          <p className="mt-3 text-[16px] leading-[1.55] text-black/60">{t('transit.body')}</p>
         </div>
-
         <div className="mt-8 rounded-[28px] border border-black/8 bg-white p-6">
-          {loading && <div className="text-[13px] text-black/50">กำลังโหลด...</div>}
+          {loading && <div className="text-[13px] text-black/50">{t('common.loading')}</div>}
           {error && <p className="text-[13px] text-red-600">{error}</p>}
           {!loading && !error && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {transits.map((t) => (
-                <div key={t.name || t.id} className="rounded-2xl border border-black/7 bg-[#fbfbfd] px-4 py-3">
-                  <div className="text-[12px] text-black/55 font-medium">{t.name || t.id}</div>
-                  <div className="mt-1 text-[14px] font-semibold text-black">{t.sign || ''}</div>
-                  <div className="text-[12px] text-black/50">{t.degree ?? ''}</div>
+              {transits.map((item) => (
+                <div key={item.name || item.id} className="rounded-2xl border border-black/7 bg-[#fbfbfd] px-4 py-3">
+                  <div className="text-[12px] text-black/55 font-medium">{item.name || item.id}</div>
+                  <div className="mt-1 text-[14px] font-semibold text-black">{item.sign || ''}</div>
+                  <div className="text-[12px] text-black/50">{item.degree ?? ''}</div>
                 </div>
               ))}
               {transits.length === 0 && <div className="text-[13px] text-black/50">ไม่มีข้อมูล transit</div>}

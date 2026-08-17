@@ -1,8 +1,12 @@
 from pathlib import Path
 from fastapi import APIRouter
+import os
 
 router = APIRouter()
-BASE = Path(__file__).resolve().parents[2] / "raw" / "astrology"
+
+_DEFAULT_BASE = Path(__file__).resolve().parents[2] / 'raw' / 'astrology'
+_FALLBACK_BASE = Path(__file__).resolve().parents[3] / 'AI REBORN' / 'raw' / 'astrology'
+BASE = Path(os.getenv('ASTRO_RAW_DIR', _DEFAULT_BASE if _DEFAULT_BASE.exists() else _FALLBACK_BASE))
 
 
 @router.get("/list")

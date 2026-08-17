@@ -27,5 +27,6 @@ export const api = {
   auth: {
     signup: (payload) => request('/v1/auth/signup', { method: 'POST', body: JSON.stringify(payload) }),
     login: (payload) => request('/v1/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
+    me: () => request('/v1/auth/me'),
   },
 };

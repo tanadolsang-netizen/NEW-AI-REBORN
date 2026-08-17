@@ -21,7 +21,6 @@ export default function Features() {
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
   const cardRefs = useRef([]);
-  const [inView, setInView] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -34,17 +33,17 @@ export default function Features() {
   }, []);
 
   return (
-    <section id="features" ref={sectionRef} className="relative overflow-hidden py-28 bg-white">
+    <section id="features" ref={sectionRef} className="relative overflow-hidden py-28 bg-[#0b0b0d]">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-40 top-24 h-80 w-80 rounded-full bg-gradient-to-br from-indigo-100/50 to-transparent blur-3xl" />
-        <div className="absolute -right-40 bottom-16 h-80 w-80 rounded-full bg-gradient-to-br from-violet-100/50 to-transparent blur-3xl" />
+        <div className="absolute -left-40 top-24 h-80 w-80 rounded-full bg-gradient-to-br from-indigo-900/40 to-transparent blur-3xl" />
+        <div className="absolute -right-40 bottom-16 h-80 w-80 rounded-full bg-gradient-to-br from-violet-900/40 to-transparent blur-3xl" />
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6">
         <div ref={headerRef} className="max-w-2xl">
-          <div className="text-[11px] font-semibold tracking-widest text-black/45 uppercase mb-4">Capabilities</div>
-          <h2 className="text-[44px] md:text-[54px] leading-[0.95] tracking-[-0.035em] font-semibold text-black">{t('features.title')}</h2>
-          <p className="mt-5 text-[16px] leading-[1.6] text-black/55">{t('features.subtitle')}</p>
+          <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-4">Capabilities</div>
+          <h2 className="text-[44px] md:text-[54px] leading-[0.95] tracking-[-0.035em] font-semibold text-white">{t('features.title')}</h2>
+          <p className="mt-5 text-[16px] leading-[1.6] text-white/55">{t('features.subtitle')}</p>
         </div>
 
         <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -52,13 +51,13 @@ export default function Features() {
             <div
               key={i}
               ref={(el) => (cardRefs.current[i] = el)}
-              className="group relative overflow-hidden rounded-[28px] border border-black/8 bg-[#fbfbfd] p-7 shadow-[0_1px_0_rgba(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)] transition-all duration-500"
+              className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] p-7 shadow-[0_1px_0_rgba(255,255,255,0.04)] hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.35)] transition-all duration-500"
             >
-              <div className="pointer-events-none absolute -top-20 -right-20 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-100/70 to-transparent blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className="pointer-events-none absolute -top-20 -right-20 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-600/40 to-transparent blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               <div className="relative">
-                <div className="text-[22px] text-black/75 tracking-tight mb-4">{item.icon}</div>
-                <div className="text-[15px] font-semibold text-black/90">{item.title}</div>
-                <p className="mt-2 text-[14px] leading-[1.55] text-black/55">{item.desc}</p>
+                <div className="text-[22px] text-white/80 tracking-tight mb-4">{item.icon}</div>
+                <div className="text-[15px] font-semibold text-white/90">{item.title}</div>
+                <p className="mt-2 text-[14px] leading-[1.55] text-white/55">{item.desc}</p>
               </div>
             </div>
           ))}

@@ -66,6 +66,11 @@ const translations = {
       emptyBody: 'ยังไม่มีข้อมูลสาขา',
       readMore: 'อ่านเพิ่มเติม',
     },
+    transit: {
+      title: 'Transit ปัจจุบัน',
+      subtitle: 'ตำแหน่งดาวเคราะห์ปัจจุบัน/ไกล',
+      body: 'ดู planetary positions ปัจจุบัน พร้อม overlay ตำแหน่งกำเนิด',
+    },
     dashboard: {
       greeting: 'สวัสดี, นักโหรจร',
       charts: 'ชาร์ตของฉัน',
@@ -168,6 +173,11 @@ const translations = {
       emptyIcon: '🕯️',
       emptyBody: 'No branch data yet',
       readMore: 'Read more',
+    },
+    transit: {
+      title: 'Current Transits',
+      subtitle: 'Current / distant planetary positions',
+      body: 'View current planetary positions with natal overlay',
     },
     dashboard: {
       greeting: 'Welcome back, stargazer',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLang } from '../i18n.jsx';
@@ -21,10 +21,10 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer ref={ref} className="border-t border-black/[0.06] bg-white">
+    <footer ref={ref} className="border-t border-white/10 bg-[#0b0b0d]">
       <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-[12px] text-black/45">{t('common.rights').replace('{year}', year)}</div>
-        <div className="text-[12px] text-black/45">{t('common.built')}</div>
+        <div className="text-[12px] text-white/45">{t('common.rights').replace('{year}', year)}</div>
+        <div className="text-[12px] text-white/45">{t('common.built')}</div>
       </div>
     </footer>
   );
