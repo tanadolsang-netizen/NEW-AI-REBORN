@@ -1,108 +1,96 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLang } from '../i18n.jsx';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, MeshDistortMaterial } from '@react-three/drei';
 
 gsap.registerPlugin(ScrollTrigger);
 
+function Sphere() {
+  const ref = useRef(null);
+  return (
+    <mesh ref={ref} scale={[1.9, 1.9, 1.9]}>
+      <sphereGeometry args={[1, 96, 96]} />
+      <MeshDistortMaterial color="#e8e8ed" distort={0.35} speed={1.0} roughness={0.25} metalness={0.08} clearcoat={0.35} />
+      <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} autoRotate={false} />
+    </mesh>
+  );
+}
+
 export default function Hero() {
+  const { t } = useLang();
+  const sectionRef = useRef(null);
   const titleRef = useRef(null);
   const bodyRef = useRef(null);
-  const ctaRef = useRef(null);
+  const actionsRef = useRef(null);
+  const rightRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tl.fromTo(titleRef.current, { opacity: 0, y: 28, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2 })
-        .fromTo(bodyRef.current, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.95 }, '-=0.75')
-        .fromTo(ctaRef.current, { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.7 }, '-=0.55');
-
-      gsap.fromTo('.hero-blob-wrap', { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 1.4, ease: 'power2.out', delay: 0.05 });
-
-      gsap.to('.hero-blob-wrap', {
-        yPercent: 14,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#hero',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 0.8,
-        },
-      });
-    }, titleRef);
-
+      tl.fromTo(titleRef.current, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.9 })
+        .fromTo(bodyRef.current, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.85 }, '-=0.6')
+        .fromTo(actionsRef.current.children, { opacity: 0, y: 16 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.7 }, '-=0.55')
+        .fromTo(rightRef.current, { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 1.1 }, '-=0.8');
+    }, sectionRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="hero" className="relative min-h-screen w-full overflow-hidden bg-[#fbfbfd]">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="hero-blob-wrap absolute -right-24 -top-20 h-[70vmin] w-[70vmin] opacity-[0.72]">
-          <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 3.6], fov: 45 }}>
-            <ambientLight intensity={1.1} />
-            <directionalLight position={[3, 3, 3]} intensity={1.0} />
-            <Blob />
-            <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} autoRotate={false} />
-          </Canvas>
-        </div>
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#fbfbfd] to-transparent" />
-      </div>
+    <section id="hero" ref={sectionRef} className="relative min-h-screen flex items-center bg-[#fbfbfd]">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/40 via-transparent to-violet-50/30 pointer-events-none" />
 
-      <div className="relative mx-auto max-w-6xl px-6 pt-36 pb-28 md:pt-44 md:pb-36">
-        <div className="max-w-2xl">
-          <h1 ref={titleRef} className="text-[56px] md:text-[72px] leading-[0.98] tracking-[-0.04em] font-semibold text-black">
-            ดูดวงด้วยตำรา
-            <span className="block text-black/75">ความแม่นยำจากดาราศาสตร์</span>
+      <div className="mx-auto max-w-6xl px-6 pt-28 pb-20 w-full grid md:grid-cols-2 gap-12 items-center relative">
+        <div className="max-w-xl">
+          <div
+            ref={titleRef}
+            className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 backdrop-blur-xl px-4 py-1.5 text-[11px] font-semibold tracking-wide text-black/70 mb-8"
+          >
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-indigo-500" />
+            {t('hero.tag')}
+          </div>
+
+          <h1 ref={titleRef} className="text-[52px] md:text-[68px] leading-[0.95] tracking-[-0.045em] font-semibold text-black">
+            {t('hero.title')}
+            <span className="block mt-1 text-black/40">{t('hero.titleSub')}</span>
           </h1>
-          <p ref={bodyRef} className="mt-6 text-[17px] md:text-[19px] leading-[1.55] text-black/65 max-w-xl">
-            คำนวณ ephemeris ด้วย JPL DE421 เอง offline — ไม่พึ่ง API ภายนอก।แปลงเวลา/พิกัด birthplace เป็นตำแหน่งดาวเคราะห์จริง แล้วอ่านจังหวะชีวิตอย่างมีโครงสร้าง
+
+          <p ref={bodyRef} className="mt-6 text-[17px] leading-[1.6] text-black/55 max-w-md">
+            {t('hero.body')}
           </p>
-          <div ref={ctaRef} className="mt-10 flex flex-wrap gap-3">
-            <button
-              onClick={() => document.getElementById('natal')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-[14px] font-medium text-white hover:bg-black/85 active:scale-[0.97] transition-all"
+
+          <div ref={actionsRef} className="mt-8 flex flex-wrap items-center gap-3">
+            <a
+              href="#natal"
+              className="inline-flex items-center justify-center rounded-full bg-black text-white px-6 py-3 text-[14px] font-medium hover:bg-black/85 active:scale-[0.97] transition-all"
             >
-              เริ่มคำนวณดวง
-            </button>
-            <button
-              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center justify-center rounded-full bg-white/70 px-6 py-3 text-[14px] font-medium text-black backdrop-blur-md border border-black/10 hover:bg-white active:scale-[0.97] transition-all"
+              {t('hero.cta1')}
+            </a>
+            <a
+              href="#branches"
+              className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white/80 backdrop-blur-xl px-6 py-3 text-[14px] font-medium text-black/80 hover:border-black/25 hover:text-black transition-all"
             >
-              ทำไมต้อง ASTRAL
-            </button>
+              {t('hero.cta2')}
+            </a>
+          </div>
+        </div>
+
+        <div ref={rightRef} className="relative h-[420px] md:h-[520px]">
+          <div className="absolute inset-0 md:translate-x-8">
+            <div className="relative h-full w-full rounded-[36px] border border-black/[0.07] bg-white/60 backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.06)] overflow-hidden">
+              <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 3.8], fov: 45 }} className="pointer-events-none">
+                <ambientLight intensity={1.1} />
+                <directionalLight position={[3, 3, 3]} intensity={1.0} />
+                <Sphere />
+              </Canvas>
+              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
+            </div>
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function Blob() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(ref.current.rotation, {
-        x: Math.PI * 2,
-        y: Math.PI * 1.5,
-        duration: 28,
-        repeat: -1,
-        ease: 'none',
-      });
-    }, ref);
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <mesh ref={ref} scale={[1.9, 1.9, 1.9]}>
-      <sphereGeometry args={[1, 128, 128]} />
-      <MeshDistortMaterial
-        color="#e8e8ed"
-        attach="material"
-        distort={0.55}
-        speed={1.4}
-        roughness={0.18}
-        metalness={0.08}
-        clearcoat={0.4}
-      />
-    </mesh>
   );
 }

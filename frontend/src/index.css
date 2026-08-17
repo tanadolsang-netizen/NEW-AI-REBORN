@@ -1,10 +1,18 @@
 @import "tailwindcss";
 
+@theme {
+  --font-family-sans: Prompt, "Noto Sans Thai", "SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 :root {
-  font-family: "SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, sans-serif;
+  font-family: Prompt, "Noto Sans Thai", "SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background: #fbfbfd;
   color: #111;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga", "calt", "ccmp", "kern";
 }
 
 * {

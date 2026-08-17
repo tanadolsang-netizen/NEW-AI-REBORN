@@ -3,61 +3,110 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLang } from '../i18n.jsx';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const THAI = {
+  search: 'ค้นหาสาขา...',
+  emptyIcon: '🕯️',
+  emptyTitle: 'ยังไม่มีข้อมูลสาขา',
+  emptyBody: 'ลองเปลี่ยนคำค้น หรือกลับมาตรวจสอบใหม่',
+  readMore: 'อ่านเพิ่มเติม',
+};
+
+const EN = {
+  search: 'Search branches...',
+  emptyIcon: '🕯️',
+  emptyTitle: 'No branch data yet',
+  emptyBody: 'Try another keyword or check back later',
+  readMore: 'Read more',
+};
+
 export default function BranchesPage() {
+  const { t } = useLang();
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
-  const listRef = useRef(null);
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const itemsRef = useRef([]);
+  const [q, setQ] = useState('');
+  const lang = typeof window !== 'undefined' ? (localStorage.getItem('astral-lang') || 'th') : 'th';
+  const strings = lang === 'th' ? THAI : EN;
 
-  useEffect(() => {
-    const base = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000';
-    fetch(`${base}/v1/branches/list`)
-      .then((r) => r.json())
-      .then((d) => { setItems(Array.isArray(d) ? d : []); setLoading(false); })
-      .catch((e) => { setError(e.message); setLoading(false); });
-  }, []);
+  const all = [
+    { title: 'Western Natal Astrology', tag: 'natal', body: ' natal chart, houses, aspects, planetary dignities.' },
+    { title: 'Thai Astrology (โหราศาสตร์ไทย)', tag: 'thai', body: ' 西方的宫位体系结合泰国本土占星术与灵性解读。' },
+    { title: 'Horary Astrology', tag: 'western', body: 'Answering specific questions through chart analysis of the moment.' },
+    { title: 'Mundane Astrology', tag: 'mundane', body: 'World events, countries, and collective trends.' },
+    { title: 'Electional Astrology', tag: 'electional', body: 'Choosing the best timing for actions and events.' },
+    { title: 'Medical Astrology', tag: 'medical', body: 'Health predispositions, body parts, and herbal correspondences.' },
+    { title: 'Financial Astrology', tag: 'financial', body: 'Market timing, commodity cycles, and business astrology.' },
+    { title: 'Astrocartography', tag: 'astro', body: 'Relocation astrology and planetary lines across Earth.' },
+    { title: 'Composite Charts', tag: 'composite', body: 'Relationship astrology through midpoints and composite charts.' },
+  ];
+
+  const filtered = all.filter((b) => b.title.toLowerCase().includes(q.toLowerCase()) || b.tag.includes(q.toLowerCase()));
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(headerRef.current, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 78%' } });
-      if (items.length) {
-        gsap.fromTo(listRef.current, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out', delay: 0.1 });
-      }
+      gsap.fromTo(itemsRef.current, { opacity: 0, y: 22 }, { opacity: 1, y: 0, stagger: 0.06, duration: 0.75, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 78%', once: true } });
     }, sectionRef);
     return () => ctx.revert();
-  }, [items.length]);
+  }, [q, filtered.length]);
 
   return (
-    <section id="branches" ref={sectionRef} className="py-28 bg-white">
-      <div className="mx-auto max-w-6xl px-6">
-        <div ref={headerRef}>
-          <h2 className="text-[36px] md:text-[44px] leading-[0.98] tracking-[-0.03em] font-semibold text-black">
-            สาขาโหราศาสตร์
-          </h2>
-          <p className="mt-3 text-[16px] leading-[1.55] text-black/60">ภาพรวมสาขาหลัก + แหล่งอ้างอิงใน vault</p>
+    <section id="branches" ref={sectionRef} className="relative overflow-hidden py-28 bg-white">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-40 top-20 h-80 w-80 rounded-full bg-gradient-to-br from-emerald-100/50 to-transparent blur-3xl" />
+        <div className="absolute -right-40 bottom-16 h-80 w-80 rounded-full bg-gradient-to-br from-cyan-100/50 to-transparent blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-6">
+        <div ref={headerRef} className="max-w-2xl">
+          <div className="text-[11px] font-semibold tracking-widest text-black/45 uppercase mb-4">{t('branches.subtitle')}</div>
+          <h2 className="text-[44px] md:text-[54px] leading-[0.95] tracking-[-0.035em] font-semibold text-black">{t('branches.title')}</h2>
+          <p className="mt-4 text-[16px] leading-[1.6] text-black/55">{t('branches.subtitle')}</p>
         </div>
 
-        <div ref={listRef} className="mt-8 rounded-[28px] border border-black/8 bg-[#fbfbfd] p-6">
-          {loading && <div className="text-[13px] text-black/50">กำลังโหลด...</div>}
-          {error && <p className="text-[13px] text-red-600">{error}</p>}
-          {!loading && !error && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {items.map((b) => (
-                <div key={b.id || b.name} className="rounded-2xl border border-black/7 bg-white px-4 py-3">
-                  <div className="text-[13px] font-semibold text-black/90">{b.name || b.title || b.id}</div>
-                  {b.desc && <div className="mt-1 text-[13px] text-black/55 leading-relaxed">{b.desc}</div>}
-                </div>
-              ))}
-              {items.length === 0 && <div className="text-[13px] text-black/50">ยังไม่มีข้อมูลสาขา</div>}
-            </div>
-          )}
+        <div className="mt-8">
+          <div className="relative">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={strings.search}
+              className="w-full rounded-2xl border border-black/10 bg-[#fbfbfd] px-5 py-3.5 pl-12 text-[14px] text-black placeholder:text-black/35 outline-none focus:border-black/35 focus:ring-2 focus:ring-black/10 transition-all"
+            />
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-black/35">⌕</span>
+          </div>
+          <div className="mt-3 text-[12px] font-medium text-black/45">{filtered.length} {t('branches.count')}</div>
         </div>
+
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((item, i) => (
+            <div
+              key={item.title}
+              ref={(el) => (itemsRef.current[i] = el)}
+              className="group relative overflow-hidden rounded-[28px] border border-black/8 bg-[#fbfbfd] p-7 shadow-[0_1px_0_rgba(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)] transition-all duration-500"
+            >
+              <div className="pointer-events-none absolute -top-16 -right-16 h-44 w-44 rounded-full bg-gradient-to-br from-emerald-100/70 to-transparent blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className="relative">
+                <div className="text-[12px] font-semibold tracking-widest text-black/45 uppercase mb-3">{item.tag}</div>
+                <div className="text-[15px] font-semibold text-black/90 leading-snug">{item.title}</div>
+                <p className="mt-2 text-[14px] leading-[1.55] text-black/55">{item.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="mt-12 flex flex-col items-center text-center">
+            <div className="text-[28px] mb-3">{strings.emptyIcon}</div>
+            <div className="text-[15px] font-semibold text-black/70">{strings.emptyTitle}</div>
+            <p className="mt-1 text-[13px] text-black/45">{strings.emptyBody}</p>
+          </div>
+        )}
       </div>
     </section>
   );

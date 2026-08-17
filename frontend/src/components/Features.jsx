@@ -3,87 +3,63 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLang } from '../i18n.jsx';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const items = [
-  {
-    title: 'Ephemeris จริง offline',
-    desc: 'คำนวณตำแหน่งดาวเคราะห์ด้วย JPL DE421 + skyfield แบบ standalone ไม่พึ่งเว็บ第三步',
-    icon: '🧭',
-  },
-  {
-    title: 'สองระบบ: ไทย + สากล',
-    desc: 'แสดง Tropical และ Lahiri Sidereal side-by-side พร้อมอ้างอิง ayanamsa',
-    icon: '✨',
-  },
-  {
-    title: 'Transit เปรียบเทียบ',
-    desc: 'ตรวจ overlay ดาวเคราะห์ปัจจุบันกับตำแหน่งกำเนิด + จันทร์ขึ้น/อังคารด้วย',
-    icon: '🪐',
-  },
-  {
-    title: 'สาขาโหราศาสตร์',
-    desc: 'Natal, Synastry, Electional, Horary, Medical, Financial, Vedic, Chinese, Astrocartography, Mundane, Evolutionary',
-    icon: '📚',
-  },
-  {
-    title: 'แจ้งเตือนนาทีทอง',
-    desc: 'ตั้งเวลาแจ้งเตือนวันเวลา movement สำคัญ พร้อม push notification + preferences',
-    icon: '🔔',
-  },
-  {
-    title: 'Backend จาก vault',
-    desc: 'ใช้โครงสร้าง wiki/raw 론 vault เป็น content engine คำนวณผลตรงจากข้อมูลตัวเอง',
-    icon: '🛡️',
-  },
+  { title: 'Real ephemeris', desc: 'Offline-first ephemeris powered by JPL DE421 + skyfield. No reliance on external APIs.', icon: '✦' },
+  { title: 'Dual traditions', desc: 'Thai + Western astrology in one coherent system, not two disconnected tools.', icon: '◈' },
+  { title: 'FastAPI backend', desc: 'Vault scripts exposed as a typed REST layer with validation and graceful errors.', icon: '⬡' },
+  { title: 'Apple-style frontend', desc: '3D canvas, GSAP motion, glassmorphism, and responsive layout out of the box.', icon: '◇' },
+  { title: 'Auth & profiles', desc: 'Supabase auth with saved readings, history, and private journaling.', icon: '⊹' },
+  { title: 'Payments', desc: 'Subscriptions and credits via Stripe with transparent pricing.', icon: '⬢' },
 ];
 
 export default function Features() {
+  const { t } = useLang();
   const sectionRef = useRef(null);
+  const headerRef = useRef(null);
   const cardRefs = useRef([]);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top 72%',
-        onEnter: () => setInView(true),
-      });
-      if (inView) {
-        gsap.fromTo(
-          cardRefs.current,
-          { opacity: 0, y: 26 },
-          { opacity: 1, y: 0, stagger: 0.07, duration: 0.8, ease: 'power3.out' }
-        );
-      }
+      gsap.fromTo(headerRef.current, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 78%' } });
+      gsap.fromTo(cardRefs.current, { opacity: 0, y: 26 }, { opacity: 1, y: 0, stagger: 0.07, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 78%', once: true } });
     }, sectionRef);
     return () => ctx.revert();
-  }, [inView]);
+  }, []);
 
   return (
-    <section id="features" ref={sectionRef} className="relative py-28 bg-white">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="max-w-2xl">
-          <h2 className="text-[40px] md:text-[52px] leading-[0.98] tracking-[-0.03em] font-semibold text-black">
-            ทำไมเลือก ASTRAL
-          </h2>
-          <p className="mt-4 text-[17px] leading-[1.55] text-black/60">
-            เครื่องมือโหราศาสตร์ที่คำนวณเอง ไม่ใช่แค่รวบรวมคำ。สมาร์ท、精确、ตรงไปตรงมา。
-          </p>
+    <section id="features" ref={sectionRef} className="relative overflow-hidden py-28 bg-white">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-40 top-24 h-80 w-80 rounded-full bg-gradient-to-br from-indigo-100/50 to-transparent blur-3xl" />
+        <div className="absolute -right-40 bottom-16 h-80 w-80 rounded-full bg-gradient-to-br from-violet-100/50 to-transparent blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-6">
+        <div ref={headerRef} className="max-w-2xl">
+          <div className="text-[11px] font-semibold tracking-widest text-black/45 uppercase mb-4">Capabilities</div>
+          <h2 className="text-[44px] md:text-[54px] leading-[0.95] tracking-[-0.035em] font-semibold text-black">{t('features.title')}</h2>
+          <p className="mt-5 text-[16px] leading-[1.6] text-black/55">{t('features.subtitle')}</p>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((item, idx) => (
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {items.map((item, i) => (
             <div
-              key={item.title}
-              ref={(el) => (cardRefs.current[idx] = el)}
-              className="group rounded-[28px] border border-black/8 bg-[#fbfbfd] p-7 shadow-[0_1px_0_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-500"
+              key={i}
+              ref={(el) => (cardRefs.current[i] = el)}
+              className="group relative overflow-hidden rounded-[28px] border border-black/8 bg-[#fbfbfd] p-7 shadow-[0_1px_0_rgba(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)] transition-all duration-500"
             >
-              <div className="text-[28px] leading-none">{item.icon}</div>
-              <h3 className="mt-4 text-[15px] font-semibold tracking-tight text-black/90">{item.title}</h3>
-              <p className="mt-2 text-[14px] leading-[1.55] text-black/60">{item.desc}</p>
+              <div className="pointer-events-none absolute -top-20 -right-20 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-100/70 to-transparent blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className="relative">
+                <div className="text-[22px] text-black/75 tracking-tight mb-4">{item.icon}</div>
+                <div className="text-[15px] font-semibold text-black/90">{item.title}</div>
+                <p className="mt-2 text-[14px] leading-[1.55] text-black/55">{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
