@@ -34,23 +34,22 @@ export default function Navbar() {
         <a href="#" className="text-[17px] font-semibold tracking-tight text-black">{t('brand')}</a>
 
         <nav className="hidden md:flex items-center gap-8">
-          {['home', 'natal', 'branches'].map((k) => (
+          {['home', 'dashboard', 'natal', 'synastry', 'branches'].map((k) => (
             <a key={k} href={`#${k === 'home' ? 'hero' : k}`} className="text-[13px] text-black/60 hover:text-black transition-colors">
               {t(`nav.${k}`)}
             </a>
           ))}
-          <button
-            onClick={toggle}
-            className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70 hover:border-black/25 hover:text-black transition-all"
-          >
+          <button onClick={toggle} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70 hover:border-black/25 hover:text-black transition-all">
             {lang === 'th' ? 'TH' : 'EN'}
           </button>
+          <button onClick={() => {}} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70 hover:border-black/25 hover:text-black transition-all">{t('nav.signin')}</button>
         </nav>
 
         <div className="md:hidden flex items-center gap-3">
           <button onClick={toggle} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70">
             {lang === 'th' ? 'TH' : 'EN'}
           </button>
+          <button onClick={() => {}} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70">{t('nav.signin')}</button>
           <button onClick={() => setOpen((v) => !v)} className="h-9 w-9 flex items-center justify-center rounded-full border border-black/10">
             <span className="space-y-[5px]">
               <span className={`block h-[1.5px] w-[14px] bg-black transition-all ${open ? 'translate-y-[6.5px] rotate-45' : ''}`} />
