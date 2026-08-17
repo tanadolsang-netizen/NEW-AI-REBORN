@@ -1,43 +1,8 @@
-'use client';
-
 import { useEffect, useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { MeshDistortMaterial, OrbitControls } from '@react-three/drei';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
-
-function Blob() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(ref.current.rotation, {
-        x: Math.PI * 2,
-        y: Math.PI * 1.5,
-        duration: 28,
-        repeat: -1,
-        ease: 'none',
-      });
-    }, ref);
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <mesh ref={ref} scale={[1.9, 1.9, 1.9]}>
-      <sphereGeometry args={[1, 128, 128]} />
-      <MeshDistortMaterial
-        color="#e8e8ed"
-        attach="material"
-        distort={0.55}
-        speed={1.4}
-        roughness={0.18}
-        metalness={0.08}
-        clearcoat={0.4}
-      />
-    </mesh>
-  );
-}
 
 export default function Hero() {
   const titleRef = useRef(null);
@@ -89,7 +54,7 @@ export default function Hero() {
             <span className="block text-black/75">ความแม่นยำจากดาราศาสตร์</span>
           </h1>
           <p ref={bodyRef} className="mt-6 text-[17px] md:text-[19px] leading-[1.55] text-black/65 max-w-xl">
-            คำนวณ ephemeris ด้วย JPL DE421 เอง offline — ไม่พึ่ง API ภายนอก。แปลงเวลา/พิกัด birthplace เป็นตำแหน่งดาวเคราะห์จริง แล้วอ่านจังหวะชีวิตอย่างมีโครงสร้าง
+            คำนวณ ephemeris ด้วย JPL DE421 เอง offline — ไม่พึ่ง API ภายนอก।แปลงเวลา/พิกัด birthplace เป็นตำแหน่งดาวเคราะห์จริง แล้วอ่านจังหวะชีวิตอย่างมีโครงสร้าง
           </p>
           <div ref={ctaRef} className="mt-10 flex flex-wrap gap-3">
             <button
@@ -108,5 +73,36 @@ export default function Hero() {
         </div>
       </div>
     </section>
+  );
+}
+
+function Blob() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.to(ref.current.rotation, {
+        x: Math.PI * 2,
+        y: Math.PI * 1.5,
+        duration: 28,
+        repeat: -1,
+        ease: 'none',
+      });
+    }, ref);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <mesh ref={ref} scale={[1.9, 1.9, 1.9]}>
+      <sphereGeometry args={[1, 128, 128]} />
+      <MeshDistortMaterial
+        color="#e8e8ed"
+        attach="material"
+        distort={0.55}
+        speed={1.4}
+        roughness={0.18}
+        metalness={0.08}
+        clearcoat={0.4}
+      />
+    </mesh>
   );
 }

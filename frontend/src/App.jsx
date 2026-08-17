@@ -1,44 +1,29 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
+import Features from './components/Features';
 import Footer from './components/Footer';
-
-const Hero = lazy(() => import('./components/Hero'));
-const Features = lazy(() => import('./components/Features'));
-const NatalPage = lazy(() => import('./pages/NatalPage'));
-const TransitPage = lazy(() => import('./pages/TransitPage'));
-const BranchesPage = lazy(() => import('./pages/BranchesPage'));
-
-function Loader() {
-  return (
-    <div className="flex items-center justify-center h-24 text-[13px] text-black/40">
-      กำลังโหลด...
-    </div>
-  );
-}
+import Hero from './components/Hero';
+import NatalPage from './pages/NatalPage';
+import TransitPage from './pages/TransitPage';
+import BranchesPage from './pages/BranchesPage';
 
 export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-[#fbfbfd] text-black antialiased">
-      <Navbar />
-      <Suspense fallback={<Loader />}>
+    <HashRouter>
+      <div className="min-h-screen bg-[#fbfbfd] text-[#111]">
+        <Navbar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         <Routes>
-          <Route path="/" element={
-            <>
-              <Hero />
-              <Features />
-              <NatalPage />
-              <TransitPage />
-              <BranchesPage />
-            </>
-          } />
+          <Route path="/" element={<Hero />} />
           <Route path="/natal" element={<NatalPage />} />
           <Route path="/transit" element={<TransitPage />} />
           <Route path="/branches" element={<BranchesPage />} />
         </Routes>
-      </Suspense>
-      <Footer />
-    </div>
+        <Features />
+        <Footer />
+      </div>
+    </HashRouter>
   );
 }
