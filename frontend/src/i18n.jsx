@@ -17,7 +17,7 @@ const translations = {
     },
     hero: {
       tag: 'โหราศาสตร์อัจฉริยะ',
-      title: 'คำนวณดวงด้วยเลข heavenly ลネจ',
+      title: 'คำนวณดวงด้วยเลข heavenly',
       titleSub: 'ความแม่นยำจากดาราศาสตร์',
       body: 'ระบบคำนวณ ephemeris offline แบบ standalone ไม่พึ่ง API ภายนอก พร้อมสาขาวิชาที่ครอบคลุม',
       cta1: 'คำนวณดวงเกิด',

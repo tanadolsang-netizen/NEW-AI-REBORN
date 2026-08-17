@@ -1,94 +1,184 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useMemo, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
 import { useLang } from '../i18n.jsx';
-import { api } from '../services/api.js';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, MeshDistortMaterial } from '@react-three/drei';
 
-gsap.registerPlugin(ScrollTrigger);
-
-function Sphere() {
+function GalaxyBackground({ intensity = 1.2 }) {
   const ref = useRef(null);
+
+  const galaxy = useMemo(() => {
+    const count = 5000;
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    const sizes = new Float32Array(count);
+
+    const insideColor = new THREE.Color('#ffddaa');
+    const outsideColor = new THREE.Color('#4fc3f7');
+    const coreColor = new THREE.Color('#ffffff');
+
+    for (let i = 0; i < count; i++) {
+      const radius = Math.random() * 12 + 0.3;
+      const spinAngle = radius * 0.8;
+      const branchAngle = (i % 3) * ((2 * Math.PI) / 3);
+      const randomX = (Math.random() - 0.5) * (0.4 + radius * 0.25);
+      const randomY = (Math.random() - 0.5) * (0.2 + radius * 0.1);
+      const randomZ = (Math.random() - 0.5) * (0.4 + radius * 0.25);
+
+      positions[i * 3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
+      positions[i * 3 + 1] = randomY * 1.8;
+      positions[i * 3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+
+      const mixRatio = Math.min(radius / 10, 1);
+      const mixedColor = insideColor.clone().lerp(outsideColor, mixRatio);
+      if (radius < 1.5) mixedColor.lerp(coreColor, (1.5 - radius) / 1.5);
+
+      colors[i * 3] = mixedColor.r;
+      colors[i * 3 + 1] = mixedColor.g;
+      colors[i * 3 + 2] = mixedColor.b;
+
+      sizes[i] = Math.random() * 1.8 + 0.4;
+    }
+
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    g.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    return g;
+  }, []);
+
+  useFrame((_, dt) => {
+    if (ref.current) {
+      ref.current.rotation.y += dt * 0.012;
+      ref.current.rotation.x += dt * 0.002;
+    }
+  });
+
   return (
-    <mesh ref={ref} scale={[1.9, 1.9, 1.9]}>
-      <sphereGeometry args={[1, 96, 96]} />
-      <MeshDistortMaterial color="#818cf8" distort={0.35} speed={1.0} roughness={0.25} metalness={0.08} clearcoat={0.35} />
-      <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} autoRotate={false} />
-    </mesh>
+    <points ref={ref} geometry={galaxy} rotation={[0.5, 0, 0]} scale={[1.4, 1.4, 1.4]}>
+      <pointsMaterial
+        size={0.05}
+        sizeAttenuation
+        transparent
+        opacity={0.8 * intensity}
+        vertexColors
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
+function Nebulae() {
+  return (
+    <>
+      <Nebula position={[-4, 2, -6]} color="#4fc3f7" scale={1.2} />
+      <Nebula position={[5, -2, -5]} color="#818cf8" scale={1.0} />
+      <Nebula position={[0, 3, -7]} color="#f472b6" scale={0.9} />
+      <Nebula position={[-2, -3, -4]} color="#22d3ee" scale={1.1} />
+      <Nebula position={[3, 1, -6]} color="#a78bfa" scale={0.8} />
+    </>
+  );
+}
+
+function Nebula({ position, color, scale = 1 }) {
+  return (
+    <sprite position={position} scale={[4.5 * scale, 4.5 * scale, 1]}>
+      <spriteMaterial
+        color={color}
+        transparent
+        opacity={0.18}
+        blending={THREE.AdditiveBlending}
+        depthTest={false}
+      />
+    </sprite>
+  );
+}
+
+function DeepStars({ count = 1800 }) {
+  const ref = useRef(null);
+  const geo = useMemo(() => {
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const r = 18 + Math.random() * 25;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = r * Math.cos(phi);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    return g;
+  }, [count]);
+
+  useFrame((_, dt) => {
+    if (ref.current) ref.current.rotation.y += dt * 0.004;
+  });
+
+  return (
+    <points ref={ref} geometry={geo}>
+      <pointsMaterial
+        color="#c7d2fe"
+        size={0.018}
+        sizeAttenuation
+        transparent
+        opacity={0.7}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
+function HeroScene() {
+  return (
+    <Canvas
+      dpr={[1, 2]}
+      camera={{ position: [0, 0.4, 5.5], fov: 48 }}
+      gl={{ antialias: true, alpha: true }}
+    >
+      <ambientLight intensity={0.25} />
+      <pointLight position={[5, 3, 5]} color="#818cf8" intensity={6} distance={14} decay={2} />
+      <pointLight position={[-5, -2, -4]} color="#22d3ee" intensity={4.5} distance={14} decay={2} />
+      <pointLight position={[0, 5, -6]} color="#f472b6" intensity={4} distance={14} decay={2} />
+      <GalaxyBackground />
+      <Nebulae />
+      <DeepStars />
+      <OrbitControls enableZoom enablePan={false} enableRotate autoRotate autoRotateSpeed={0.5} minDistance={2.5} maxDistance={9} />
+    </Canvas>
   );
 }
 
 export default function Hero() {
-  const { t } = useLang();
-  const sectionRef = useRef(null);
-  const titleRef = useRef(null);
-  const bodyRef = useRef(null);
-  const actionsRef = useRef(null);
-  const rightRef = useRef(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tl.fromTo(titleRef.current, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.9 })
-        .fromTo(bodyRef.current, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.85 }, '-=0.6')
-        .fromTo(actionsRef.current.children, { opacity: 0, y: 16 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.7 }, '-=0.55')
-        .fromTo(rightRef.current, { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 1.1 }, '-=0.8');
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-
+  const { t, lang, setLang } = useLang();
   return (
-    <section id="hero" ref={sectionRef} className="relative min-h-screen flex items-center bg-[#0b0b0d]">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/40 via-transparent to-violet-950/30 pointer-events-none" />
+    <section id="hero" className="relative overflow-hidden bg-[#0b0b0d]">
+      <div className="absolute inset-0 z-0">
+        <HeroScene />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#0b0b0d]" />
+      </div>
 
-      <div className="mx-auto max-w-6xl px-6 pt-28 pb-20 w-full grid md:grid-cols-2 gap-12 items-center relative">
-        <div className="max-w-xl">
-          <div
-            ref={titleRef}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl px-4 py-1.5 text-[11px] font-semibold tracking-wide text-white/70 mb-8"
-          >
-            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-indigo-500" />
-            {t('hero.tag')}
-          </div>
-
-          <h1 ref={titleRef} className="text-[52px] md:text-[68px] leading-[0.95] tracking-[-0.045em] font-semibold text-white">
-            {t('hero.title')}
-            <span className="block mt-1 text-white/40">{t('hero.titleSub')}</span>
-          </h1>
-
-          <p ref={bodyRef} className="mt-6 text-[17px] leading-[1.6] text-white/60 max-w-md">
-            {t('hero.body')}
-          </p>
-
-          <div ref={actionsRef} className="mt-8 flex flex-wrap items-center gap-3">
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-36 md:py-44">
+        <div className="max-w-2xl">
+          <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-4">{t('hero.badge')}</div>
+          <h1 className="text-[46px] md:text-[66px] leading-[0.95] tracking-[-0.035em] font-semibold text-white">{t('hero.title')}</h1>
+          <p className="mt-4 text-[16px] leading-[1.65] text-white/55">{t('hero.body')}</p>
+          <div className="mt-7 flex flex-wrap gap-3">
             <a
               href="#natal"
               className="inline-flex items-center justify-center rounded-full bg-indigo-500 text-white px-6 py-3 text-[14px] font-medium hover:bg-indigo-400 active:scale-[0.97] transition-all shadow-[0_10px_30px_rgba(99,102,241,0.35)]"
             >
-              {t('hero.cta1')}
+              {t('hero.cta')}
             </a>
             <a
               href="#branches"
-              className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 backdrop-blur-xl px-6 py-3 text-[14px] font-medium text-white/80 hover:border-white/25 hover:text-white transition-all"
+              className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-[14px] font-medium text-white/80 hover:border-white/25 hover:text-white transition-all"
             >
-              {t('hero.cta2')}
+              {t('hero.secondary')}
             </a>
-          </div>
-        </div>
-
-        <div ref={rightRef} className="relative h-[420px] md:h-[520px]">
-          <div className="absolute inset-0 md:translate-x-8">
-            <div className="relative h-full w-full rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.45)] overflow-hidden">
-              <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 3.8], fov: 45 }} className="pointer-events-none">
-                <ambientLight intensity={1.1} />
-                <directionalLight position={[3, 3, 3]} intensity={1.0} />
-                <Sphere />
-              </Canvas>
-              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
-            </div>
           </div>
         </div>
       </div>

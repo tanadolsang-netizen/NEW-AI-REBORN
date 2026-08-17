@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLang } from '../i18n.jsx';
-import { api } from '../services/api.js';
+import ChartCanvas from '../components/ChartCanvas';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -96,12 +96,13 @@ export default function NatalPage() {
             </div>
           </form>
 
-          <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-7 shadow-[0_1px_0_rgba(255,255,255,0.04)]">
+          <div className="flex flex-col gap-4">
+            <ChartCanvas mode="natal" className="h-[340px] md:h-[420px]" />
             {error && (
               <div className="rounded-2xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-[13px] text-red-300">{error}</div>
             )}
             {result ? (
-              <div>
+              <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-7 shadow-[0_1px_0_rgba(255,255,255,0.04)]">
                 <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-3">{t('natal.resultTitle')}</div>
                 <pre className="text-[13px] leading-[1.6] text-white/75 whitespace-pre-wrap">{JSON.stringify(result, null, 2)}</pre>
               </div>

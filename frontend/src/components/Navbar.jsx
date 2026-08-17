@@ -8,7 +8,7 @@ import { useLang } from '../i18n.jsx';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Navbar() {
-  const { t, lang, toggle } = useLang();
+  const { t, lang, setLang } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
@@ -39,14 +39,14 @@ export default function Navbar() {
               {t(`nav.${k}`)}
             </a>
           ))}
-          <button onClick={toggle} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70 hover:border-black/25 hover:text-black transition-all">
+          <button onClick={() => setLang(lang === 'th' ? 'en' : 'th')} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70 hover:border-black/25 hover:text-black transition-all">
             {lang === 'th' ? 'TH' : 'EN'}
           </button>
           <button onClick={() => {}} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70 hover:border-black/25 hover:text-black transition-all">{t('nav.signin')}</button>
         </nav>
 
         <div className="md:hidden flex items-center gap-3">
-          <button onClick={toggle} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70">
+          <button onClick={() => setLang(lang === 'th' ? 'en' : 'th')} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70">
             {lang === 'th' ? 'TH' : 'EN'}
           </button>
           <button onClick={() => {}} className="rounded-full border border-black/10 px-3 py-1.5 text-[12px] font-medium text-black/70">{t('nav.signin')}</button>

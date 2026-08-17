@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLang } from '../i18n.jsx';
+import ChartCanvas from '../components/ChartCanvas';
 import { api } from '../services/api.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -56,7 +57,9 @@ export default function TransitPage() {
           <h2 className="text-[36px] md:text-[44px] leading-[0.98] tracking-[-0.03em] font-semibold text-black">{t('transit.title')}</h2>
           <p className="mt-3 text-[16px] leading-[1.55] text-black/60">{t('transit.body')}</p>
         </div>
-        <div className="mt-8 rounded-[28px] border border-black/8 bg-white p-6">
+        <div className="mt-8 flex flex-col gap-5">
+          <ChartCanvas mode="transit" className="h-[340px] md:h-[420px]" />
+          <div className="rounded-[28px] border border-black/8 bg-white p-6">
           {loading && <div className="text-[13px] text-black/50">{t('common.loading')}</div>}
           {error && <p className="text-[13px] text-red-600">{error}</p>}
           {!loading && !error && (
@@ -71,6 +74,7 @@ export default function TransitPage() {
               {transits.length === 0 && <div className="text-[13px] text-black/50">ไม่มีข้อมูล transit</div>}
             </div>
           )}
+        </div>
         </div>
       </div>
     </section>

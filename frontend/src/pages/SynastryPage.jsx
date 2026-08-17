@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLang } from '../i18n.jsx';
+import ChartCanvas from '../components/ChartCanvas';
 import { api } from '../services/api.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -100,6 +101,9 @@ export default function SynastryPage() {
             </div>
           )}
         </form>
+        <div className="mt-8">
+          <ChartCanvas mode="synastry" className="h-[420px] md:h-[520px]" />
+        </div>
       </div>
     </section>
   );
