@@ -1,110 +1,105 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useMemo } from 'react';
 import { useLang } from '../i18n.jsx';
-import { api } from '../services/api.js';
+import { Link } from 'react-router-dom';
 
-gsap.registerPlugin(ScrollTrigger);
-
-const sections = [
-  { label: ' natal', value: 'natal' },
-  { label: ' synastry', value: 'synastry' },
-  { label: ' branches', value: 'branches' },
+const BRIEFING_ITEMS = [
+  { labelKey: 'briefing.focus', icon: '🎯' },
+  { labelKey: 'briefing.energy', icon: '⚡' },
+  { labelKey: 'briefing.rest', icon: '🌿' },
 ];
 
 export default function DashboardPage() {
-  const { t } = useLang();
-  const sectionRef = useRef(null);
-  const [stats, setStats] = useState({ charts: 0, branches: 0, daily: '--' });
-  const [recent, setRecent] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { t, lang } = useLang();
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(sectionRef.current, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 78%' } });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        const [healthRes, branchesRes] = await Promise.allSettled([
-          api.health().catch(() => null),
-          api.branches.list().catch(() => []),
-        ]);
-        if (!cancelled) {
-          setStats((s) => ({
-            ...s,
-            charts: healthRes.status === 'fulfilled' && healthRes.value ? 1 : 0,
-            branches: branchesRes.status === 'fulfilled' && Array.isArray(branchesRes.value) ? branchesRes.value.length : 9,
-          }));
-        }
-      } catch (e) {
-        if (!cancelled) setStats((s) => ({ ...s, charts: 0, branches: 9 }));
-      }
-      if (!cancelled) setLoading(false);
-    }
-    load();
-    return () => { cancelled = true; };
-  }, []);
-
-  const today = new Date().toISOString().slice(0, 10);
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 12) return lang === 'th' ? 'สวัสดีตอนเช้า' : 'Good morning';
+    if (h < 17) return lang === 'th' ? 'สวัสดีตอนบ่าย' : 'Good afternoon';
+    return lang === 'th' ? 'สวัสดีตอนเย็น' : 'Good evening';
+  }, [lang]);
 
   return (
-    <section id="dashboard" ref={sectionRef} className="relative overflow-hidden py-28 bg-[#0b0b0d]">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-gradient-to-br from-indigo-900/40 to-transparent blur-3xl" />
-        <div className="absolute -right-24 bottom-16 h-72 w-72 rounded-full bg-gradient-to-br from-violet-900/30 to-transparent blur-3xl" />
+    <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h2 className="text-[44px] md:text-[54px] leading-[0.95] tracking-[-0.035em] font-semibold text-white">
+            {greeting}
+          </h2>
+          <p className="mt-3 text-[16px] leading-[1.6] text-white/55 max-w-xl">
+            {t('dashboard.subtitle')}
+          </p>
+        </div>
+        <div className="hidden md:flex gap-3">
+          <Link
+            to="/journal"
+            className="rounded-full bg-indigo-500 text-white px-5 py-2.5 text-[13px] font-medium hover:bg-indigo-400 active:scale-[0.97] transition-all shadow-[0_10px_30px_rgba(99,102,241,0.35)]"
+          >
+            {t('journal.title')}
+          </Link>
+          <Link
+            to="/energy"
+            className="rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-[13px] font-medium text-white/80 hover:border-white/25 hover:text-white transition-all"
+          >
+            {t('energy.title')}
+          </Link>
+        </div>
       </div>
-      <div className="relative mx-auto max-w-6xl px-6">
-        <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-4">
-          {today}
-        </div>
-        <h2 className="text-[44px] md:text-[54px] leading-[0.95] tracking-[-0.035em] font-semibold text-white">
-          {t('dashboard.title')}
-        </h2>
-        <p className="mt-4 text-[16px] leading-[1.6] text-white/55 max-w-xl">
-          {t('dashboard.subtitle')}
-        </p>
 
-        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: t('dashboard.charts'), value: stats.charts },
-            { label: t('dashboard.branches'), value: stats.branches },
-            { label: t('dashboard.dailyTransit'), value: stats.daily },
-            { label: t('dashboard.sync'), value: 'OK' },
-          ].map((s, i) => (
-            <div key={i} className="rounded-[22px] border border-white/10 bg-white/[0.03] p-5 shadow-[0_1px_0_rgba(255,255,255,0.04)]">
-              <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-2">{s.label}</div>
-              <div className="text-[26px] font-semibold text-white">{s.value}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 rounded-[28px] border border-white/10 bg-white/[0.03] p-7">
-          <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-4">{t('dashboard.recent')}</div>
-          {loading && <div className="text-[13px] text-white/50">{t('common.loading')}</div>}
-          <div className="grid gap-3">
-            {recent.map((r, i) => (
-              <div key={i} className="flex items-center justify-between rounded-2xl border border-white/6 bg-white/[0.02] px-5 py-3">
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl">
+          <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-3">{t('dashboard.briefing')}</div>
+          <div className="space-y-3">
+            {BRIEFING_ITEMS.map((item) => (
+              <div key={item.labelKey} className="flex items-start gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-3">
+                <div className="text-[18px] leading-none mt-0.5">{item.icon}</div>
                 <div>
-                  <div className="text-[14px] font-semibold text-white/90">{r.title || 'Untitled chart'}</div>
-                  <div className="text-[12px] text-white/50">{r.date}</div>
+                  <div className="text-[13px] font-semibold text-white/85">{t(item.labelKey)}</div>
+                  <div className="mt-1 text-[12px] leading-[1.6] text-white/55">
+                    {lang === 'th' ? 'ข้อมูลที่เกี่ยวข้องวันนี้อยู่ที่นี่' : 'Context for today appears here'}
+                  </div>
                 </div>
-                <span className="text-[12px] font-medium text-white/60 rounded-full border border-white/10 px-3 py-1">{r.type || 'natal'}</span>
               </div>
             ))}
-            {!loading && recent.length === 0 && (
-              <div className="text-[13px] text-white/50">{t('dashboard.empty')}</div>
-            )}
+          </div>
+        </div>
+
+        <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl">
+          <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-3">{t('energy.title')}</div>
+          <div className="text-[13px] leading-[1.7] text-white/65">
+            {t('energy.subtitle')}
+          </div>
+          <div className="mt-3 flex gap-2">
+            <Link to="/energy" className="rounded-full bg-indigo-500 text-white px-4 py-2 text-[13px] font-medium hover:bg-indigo-400 transition-all">
+              {lang === 'th' ? 'ดูพลังงานวันนี้' : 'View today'}
+            </Link>
+          </div>
+        </div>
+
+        <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl">
+          <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-3">{t('timing.title')}</div>
+          <div className="text-[13px] leading-[1.7] text-white/65">
+            {t('timing.subtitle')}
+          </div>
+          <div className="mt-3 flex gap-2">
+            <Link to="/timing" className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[13px] font-medium text-white/80 hover:border-white/25 hover:text-white transition-all">
+              {lang === 'th' ? 'ดูจังหวะชีวิต' : 'View timing'}
+            </Link>
           </div>
         </div>
       </div>
-    </section>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Link to="/journal" className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl hover:border-white/20 transition-all">
+          <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-2">{t('journal.title')}</div>
+          <div className="text-[13px] leading-[1.7] text-white/65">{t('journal.subtitle')}</div>
+        </Link>
+        <Link to="/natal" className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl hover:border-white/20 transition-all">
+          <div className="text-[11px] font-semibold tracking-widest text-white/45 uppercase mb-2">{t('nav.natal')}</div>
+          <div className="text-[13px] leading-[1.7] text-white/65">{lang === 'th' ? 'เปิดดูชาร์ตประจำวัน' : 'Open today\'s chart'}</div>
+        </Link>
+      </div>
+    </div>
   );
 }

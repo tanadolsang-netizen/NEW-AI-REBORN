@@ -6,11 +6,14 @@ import Features from './components/Features';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
 import ErrorBoundary from './components/ErrorBoundary';
+import DashboardPage from './pages/DashboardPage';
 import NatalPage from './pages/NatalPage';
 import TransitPage from './pages/TransitPage';
 import BranchesPage from './pages/BranchesPage';
-import DashboardPage from './pages/DashboardPage';
 import SynastryPage from './pages/SynastryPage';
+import DailyJournal from './pages/DailyJournal';
+import EnergyForecast from './pages/EnergyForecast';
+import TimingSync from './pages/TimingSync';
 import ChartCanvas from './components/ChartCanvas';
 import AuthModal from './components/AuthModal';
 import UpgradeModal from './components/UpgradeModal';
@@ -35,6 +38,9 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Hero />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/journal" element={<DailyJournal />} />
+              <Route path="/energy" element={<EnergyForecast />} />
+              <Route path="/timing" element={<TimingSync />} />
               <Route path="/natal" element={<NatalPage />} />
               <Route path="/synastry" element={<SynastryPage />} />
               <Route path="/transit" element={<TransitPage />} />

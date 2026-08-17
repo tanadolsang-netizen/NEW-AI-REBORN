@@ -171,13 +171,13 @@ export default function Hero() {
               href="#natal"
               className="inline-flex items-center justify-center rounded-full bg-indigo-500 text-white px-6 py-3 text-[14px] font-medium hover:bg-indigo-400 active:scale-[0.97] transition-all shadow-[0_10px_30px_rgba(99,102,241,0.35)]"
             >
-              {t('hero.cta')}
+              {t('hero.cta1')}
             </a>
             <a
-              href="#branches"
+              href="/journal"
               className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-[14px] font-medium text-white/80 hover:border-white/25 hover:text-white transition-all"
             >
-              {t('hero.secondary')}
+              {t('hero.cta2')}
             </a>
           </div>
         </div>
