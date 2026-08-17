@@ -2,7 +2,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import natal, transit, synastry, branches, payments, health, auth
+from .routers import natal, transit, synastry, branches, payments, health, auth, notifications
 from .integrations.supabase_client import init_supabase
 from .integrations.stripe_client import init_stripe
 import os
@@ -40,3 +40,4 @@ app.include_router(transit.router, prefix="/v1/transit", tags=["transit"])
 app.include_router(synastry.router, prefix="/v1/synastry", tags=["synastry"])
 app.include_router(branches.router, prefix="/v1/branches", tags=["branches"])
 app.include_router(payments.router, prefix="/v1/payments", tags=["payments"])
+app.include_router(notifications.router, prefix="/v1/notifications", tags=["notifications"])

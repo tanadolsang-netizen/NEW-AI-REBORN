@@ -1,17 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 router = APIRouter()
 
 
 class SignupIn(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     full_name: str | None = None
 
 
 class LoginIn(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 
