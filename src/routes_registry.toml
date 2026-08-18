@@ -8,5 +8,6 @@ include_routers = [
     "src.routers.transit",
     "src.routers.synastry",
     "src.routers.branches",
+    "src.routers.dashboard",
     "src.routers.payments",
 ]
