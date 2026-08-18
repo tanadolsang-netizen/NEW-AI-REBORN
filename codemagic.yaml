@@ -53,6 +53,7 @@ workflows:
             -archivePath frontend/ios/App/build/App.xcarchive \
             -destination "generic/platform=iOS" \
             -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM=$APPLE_TEAM_ID \
             clean archive
       - name: Export IPA
         script: |
