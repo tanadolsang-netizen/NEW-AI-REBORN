@@ -5,17 +5,13 @@ workflows:
     environment:
       node: latest
     scripts:
-      - npm install
       - cd frontend
+      - npm install
       - npm run build
       - npx cap sync android
     artifacts:
       - frontend/android/**/*.apk
       - frontend/android/**/*.aab
-    publishing:
-      email:
-        recipients:
-          - user@example.com
 
   ios-build:
     name: iOS Build
@@ -24,13 +20,9 @@ workflows:
       node: latest
       xcode: "16.0"
     scripts:
-      - npm install
       - cd frontend
+      - npm install
       - npm run build
       - npx cap sync ios
     artifacts:
       - frontend/ios/**/*.ipa
-    publishing:
-      email:
-        recipients:
-          - user@example.com
