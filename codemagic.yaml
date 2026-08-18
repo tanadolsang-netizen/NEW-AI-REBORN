@@ -5,24 +5,77 @@ workflows:
     environment:
       node: latest
     scripts:
-      - cd frontend
-      - npm install
-      - npm run build
-      - npx cap sync android
+      - name: Install dependencies
+        script: cd frontend && npm install
+      - name: Build Next.js
+        script: cd frontend && npm run build
+      - name: Sync Capacitor
+        script: cd frontend && npx cap sync android
     artifacts:
       - frontend/android/**/*.apk
       - frontend/android/**/*.aab
 
   ios-build:
     name: iOS Build
-    max_build_duration: 30
+    max_build_duration: 45
     environment:
       node: latest
       xcode: "16.0"
+      vars:
+        APP_STORE_CONNECT_KEY_IDENTIFIER: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
+        APP_STORE_CONNECT_API_PRIVATE_KEY: $APP_STORE_CONNECT_API_PRIVATE_KEY
     scripts:
-      - cd frontend
-      - npm install
-      - npm run build
-      - npx cap sync ios
+      - name: Install dependencies
+        script: cd frontend && npm install
+      - name: Build Next.js (static export)
+        script: cd frontend && npm run build
+      - name: Sync Capacitor iOS
+        script: cd frontend && npx cap sync ios
+      - name: Install CocoaPods (if Podfile exists)
+        script: |
+          if [ -f frontend/ios/App/Podfile ]; then
+            cd frontend/ios/App && pod install
+          fi
+      - name: Resolve SPM packages
+        script: |
+          xcodebuild -resolvePackageDependencies \
+            -project frontend/ios/App/App.xcodeproj \
+            -scheme App
+      - name: Build and archive
+        script: |
+          xcodebuild -project frontend/ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -archivePath frontend/ios/App/build/App.xcarchive \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates \
+            clean archive | xcpretty
+      - name: Export IPA
+        script: |
+          cat > /tmp/ExportOptions.plist << 'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>teamID</key>
+            <string>$APPLE_TEAM_ID</string>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath frontend/ios/App/build/App.xcarchive \
+            -exportOptionsPlist /tmp/ExportOptions.plist \
+            -exportPath frontend/ios/App/build/output
     artifacts:
-      - frontend/ios/**/*.ipa
+      - frontend/ios/App/build/output/*.ipa
+      - frontend/ios/App/build/App.xcarchive
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_API_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
