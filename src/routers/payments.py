@@ -8,9 +8,12 @@ router = APIRouter()
 @router.post("/checkout")
 async def checkout(req: StripeCheckoutRequest, authorization: str = ""):
     try:
-        user = get_current_user(authorization) if authorization.startswith("Bearer ") else None
-        if not user:
+        if not authorization.startswith("Bearer "):
             raise HTTPException(status_code=401, detail="Unauthorized")
+        try:
+            user = await get_current_user(authorization)
+        except (ValueError, RuntimeError) as exc:
+            raise HTTPException(status_code=401, detail="Unauthorized") from exc
         session = await create_checkout_session(
             StripeCheckoutRequest(
                 price_id=req.price_id,

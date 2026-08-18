@@ -13,6 +13,7 @@ Requires-Dist: supabase>=2.6
 Requires-Dist: stripe>=8.9
 Requires-Dist: pydantic-extra-types[phonenumbers]>=2.9
 Requires-Dist: slowapi>=0.1.9
+Requires-Dist: python-dotenv>=1.0
 Provides-Extra: dev
 Requires-Dist: pytest>=8.3; extra == "dev"
 Requires-Dist: pytest-asyncio>=0.23; extra == "dev"

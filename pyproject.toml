@@ -14,6 +14,7 @@ dependencies = [
     "stripe>=8.9",
     "pydantic-extra-types[phonenumbers]>=2.9",
     "slowapi>=0.1.9",
+    "python-dotenv>=1.0",
 ]
 
 [project.optional-dependencies]

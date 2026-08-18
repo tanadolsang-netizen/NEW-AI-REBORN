@@ -1,6 +1,5 @@
 import math
 from datetime import date, time, datetime, timedelta, timezone
-from typing import Optional
 
 from src.services.ephemeris import earth, eph, ts, OBLIQUITY
 
@@ -78,10 +77,6 @@ def compute_ascendant(dt_utc, lat: float, lon: float, system: str = "tropical") 
 def _to_sign(longitude_deg: float) -> tuple[str, float]:
     idx = int(longitude_deg // 30) % 12
     return SIGNS[idx], longitude_deg % 30
-
-
-def _local_to_utc(dt_local, tz_offset_hours: float):
-    return dt_local - timedelta(hours=tz_offset_hours)
 
 
 def _to_xy(ramc: float, lat: float, obliquity_rad: float) -> float:

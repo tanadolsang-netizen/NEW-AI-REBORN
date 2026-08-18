@@ -1,9 +1,31 @@
 from datetime import datetime, timezone, timedelta
-from typing import Optional
 
 from src.services.ephemeris import earth, eph, ts, OBLIQUITY
 
 from src.services.chart_service import _to_sign
+
+# Sun and Moon never appear retrograde from Earth; every other body can.
+_CAN_RETROGRADE = {"Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"}
+
+# Sampled a day apart so short-lived librations near a station don't flip the
+# sign spuriously; retrograde periods for these bodies last weeks to months.
+_RETROGRADE_SAMPLE_DAYS = 1.0
+
+
+def _ecliptic_lon_deg(target: str, when: datetime) -> float:
+    t = ts.from_datetime(when)
+    pos = earth.at(t).observe(eph[target])
+    _, lon, _ = pos.ecliptic_latlon()
+    return lon.degrees % 360
+
+
+def _is_retrograde(body_name: str, target: str, now_utc: datetime, current_lon_deg: float) -> bool:
+    if body_name not in _CAN_RETROGRADE:
+        return False
+    earlier = now_utc - timedelta(days=_RETROGRADE_SAMPLE_DAYS)
+    earlier_lon_deg = _ecliptic_lon_deg(target, earlier)
+    delta = (current_lon_deg - earlier_lon_deg + 540) % 360 - 180
+    return bool(delta < 0)
 
 
 def compute_now(lat: float, lon: float, tz_offset_hours: float = 7.0) -> dict:
@@ -23,14 +45,15 @@ def compute_now(lat: float, lon: float, tz_offset_hours: float = 7.0) -> dict:
         "Pluto": "pluto barycenter",
     }.items():
         pos = earth.at(t).observe(eph[target])
-        _, lon, _ = pos.ecliptic_latlon()
-        lon_deg = lon.degrees % 360
+        _, body_lon, _ = pos.ecliptic_latlon()
+        lon_deg = body_lon.degrees % 360
         sign, deg = _to_sign(lon_deg)
         bodies.append({
             "body": name,
             "sign": sign,
             "degree": round(deg, 4),
             "absolute_deg": round(lon_deg, 4),
+            "is_retrograde": _is_retrograde(name, target, now_utc, lon_deg),
         })
     return {
         "now_utc": now_utc.isoformat(),

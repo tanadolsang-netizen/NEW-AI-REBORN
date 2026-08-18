@@ -11,12 +11,14 @@ src/integrations/supabase_client.py
 src/models/chart.py
 src/routers/auth.py
 src/routers/branches.py
+src/routers/dashboard.py
 src/routers/health.py
 src/routers/natal.py
 src/routers/notifications.py
 src/routers/payments.py
 src/routers/synastry.py
 src/routers/transit.py
+src/services/aspects.py
 src/services/chart_service.py
 src/services/ephemeris.py
 src/services/push_service.py
