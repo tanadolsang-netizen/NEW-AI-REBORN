@@ -19,8 +19,8 @@ frontend side.
 
 ## Pages
 
-- `/` — marketing-style landing (hero, feature cards, CTA). Server component;
-  pings `/ready` at request time for the status pill.
+- `/` — marketing-style landing (hero, feature cards, CTA). Client component;
+  pings `/ready` on mount for the status pill.
 - `/dashboard` — quick stats, recent charts (`POST /api/dashboard/recent`),
   auto-loaded transit summary (`GET /api/transit/now`), and action cards.
 - `/natal` — `POST /api/natal/compute`
@@ -28,8 +28,14 @@ frontend side.
 - `/synastry` — `POST /api/synastry/cross-aspects`
 - `/branches` — `GET /api/branches/list`
 
-All data pages are client components (`"use client"`) since they're
-form/fetch driven; `/` is the only server component.
+All pages are client components (`"use client"`) since the app is built with
+`output: "export"` for Capacitor packaging — there is no Next.js server at
+runtime to do request-time SSR, so every fetch happens in the browser/webview.
+Pages use `apiPath()`/`readyPath()` from `src/lib/api.ts` instead of hardcoded
+`/api/...` strings: in a normal `next dev`/`next start` build those resolve to
+the rewrite paths above, but in a static export they resolve to a full origin
+via `NEXT_PUBLIC_API_BASE_URL` (the rewrites below don't exist once there's no
+Next server — see `MOBILE_BUILD.md`).
 
 ## Design system (`src/app/globals.css`)
 
@@ -65,3 +71,27 @@ raw branch dump on `/branches`).
 - Read `AGENTS.md` (imported above) before assuming any Next.js API matches
   your training data — this repo pins a Next.js version with breaking
   changes from what you may expect.
+
+## Business direction
+
+Full detail lives in `MARKET_RESEARCH.md` and `PRODUCT_STRATEGY.md` — read
+those before proposing roadmap/positioning changes. Summary:
+
+- **Beachhead market: Thailand.** The identified gap is that global
+  astrology apps (Co-Star, Nebula, Chani, The Pattern) don't localize
+  beyond translated copy — none support Thai zodiac (ปีนักษัตร) or the
+  Buddhist calendar. Astral's wedge is building those as first-class
+  systems, not bolt-ons.
+- **Core differentiators:** offline-first (Capacitor, local-first
+  computation), native Thai-tradition support, the multi-tradition
+  "branches" system, and privacy (birth data doesn't need to leave the
+  device for core features). Voice/conversational AI reading is a roadmap
+  item, not yet built.
+- **First shipped slice of this strategy:** `src/lib/thaiZodiac.ts` +
+  `src/components/ThaiZodiacWidget.tsx`, surfaced as a section on `/`.
+  It's a working prototype (CE-year approximation of the animal cycle,
+  EN/TH toggle scoped to that one widget) — not the full localization
+  effort described in `PRODUCT_STRATEGY.md`.
+- Market-size figures in `MARKET_RESEARCH.md` were supplied by the product
+  team as strategy inputs and have not been independently re-verified —
+  don't restate them externally without checking the source report.

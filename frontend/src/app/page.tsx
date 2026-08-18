@@ -1,17 +1,11 @@
-import Link from "next/link";
+"use client";
 
-async function checkHealth() {
-  try {
-    const res = await fetch("http://127.0.0.1:8000/ready", {
-      next: { revalidate: 0 },
-    });
-    const ok = res.ok;
-    const text = ok ? "Backend ready" : `Backend down (${res.status})`;
-    return { ok, text };
-  } catch {
-    return { ok: false, text: "Backend unreachable" };
-  }
-}
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { readyPath } from "@/lib/api";
+import ThaiZodiacWidget from "@/components/ThaiZodiacWidget";
+
+type Health = { ok: boolean; text: string };
 
 const features = [
   {
@@ -60,8 +54,24 @@ const features = [
   },
 ];
 
-export default async function Home() {
-  const health = await checkHealth();
+export default function Home() {
+  const [health, setHealth] = useState<Health>({ ok: false, text: "Checking backend…" });
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(readyPath(), { cache: "no-store" });
+        if (cancelled) return;
+        setHealth(res.ok ? { ok: true, text: "Backend ready" } : { ok: false, text: `Backend down (${res.status})` });
+      } catch {
+        if (!cancelled) setHealth({ ok: false, text: "Backend unreachable" });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -123,6 +133,8 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      <ThaiZodiacWidget />
 
       <section className="border-t border-border">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 px-6 py-20 text-center">
