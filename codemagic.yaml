@@ -27,11 +27,14 @@ workflows:
         APP_STORE_CONNECT_API_PRIVATE_KEY: $APP_STORE_CONNECT_API_PRIVATE_KEY
     scripts:
       - name: Install dependencies
-        script: cd frontend && npm install
+        working_directory: frontend
+        script: npm install
       - name: Build Next.js (static export)
-        script: cd frontend && npm run build
+        working_directory: frontend
+        script: npm run build
       - name: Sync Capacitor iOS
-        script: cd frontend && npx cap sync ios
+        working_directory: frontend
+        script: npx cap sync ios
       - name: Install CocoaPods (if Podfile exists)
         script: |
           if [ -f frontend/ios/App/Podfile ]; then
