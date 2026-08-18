@@ -22,9 +22,8 @@ workflows:
       node: latest
       xcode: "16.0"
       vars:
-        APP_STORE_CONNECT_KEY_IDENTIFIER: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
-        APP_STORE_CONNECT_API_PRIVATE_KEY: $APP_STORE_CONNECT_API_PRIVATE_KEY
+        APPLE_ID: $APPLE_ID
+        APPLE_PASSWORD: $APPLE_PASSWORD
     scripts:
       - name: Install dependencies
         working_directory: frontend
