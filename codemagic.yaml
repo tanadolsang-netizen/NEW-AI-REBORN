@@ -24,6 +24,8 @@ workflows:
       vars:
         APPLE_ID: $APPLE_ID
         APPLE_PASSWORD: $APPLE_PASSWORD
+        FASTLANE_USER: $APPLE_ID
+        FASTLANE_PASSWORD: $APPLE_PASSWORD
     scripts:
       - name: Install dependencies
         working_directory: frontend
@@ -39,6 +41,9 @@ workflows:
           if [ -f frontend/ios/App/Podfile ]; then
             cd frontend/ios/App && pod install
           fi
+      - name: Add Apple ID to keychain for signing
+        script: |
+          security add-account -p "$APPLE_PASSWORD" "$APPLE_ID" || true
       - name: Resolve SPM packages
         script: |
           xcodebuild -resolvePackageDependencies \
@@ -52,6 +57,7 @@ workflows:
             -archivePath frontend/ios/App/build/App.xcarchive \
             -destination "generic/platform=iOS" \
             -allowProvisioningUpdates \
+            -allowProvisioningDeviceRegistration \
             DEVELOPMENT_TEAM=$ \
             clean archive
       - name: Export IPA
