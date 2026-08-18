@@ -1,0 +1,595 @@
+{
+    "openapi":  "3.1.0",
+    "info":  {
+                 "title":  "Astral Backend",
+                 "version":  "0.1.0"
+             },
+    "paths":  {
+                  "/ready":  {
+                                 "get":  {
+                                             "tags":  [
+                                                          "health"
+                                                      ],
+                                             "summary":  "Ready",
+                                             "operationId":  "ready_ready_get",
+                                             "responses":  {
+                                                               "200":  {
+                                                                           "description":  "Successful Response",
+                                                                           "content":  "@{application/json=}"
+                                                                       }
+                                                           }
+                                         }
+                             },
+                  "/v1/auth/signup":  {
+                                          "post":  {
+                                                       "tags":  [
+                                                                    "auth"
+                                                                ],
+                                                       "summary":  "Signup",
+                                                       "operationId":  "signup_v1_auth_signup_post",
+                                                       "requestBody":  {
+                                                                           "content":  {
+                                                                                           "application/json":  "@{schema=}"
+                                                                                       },
+                                                                           "required":  true
+                                                                       },
+                                                       "responses":  {
+                                                                         "200":  {
+                                                                                     "description":  "Successful Response",
+                                                                                     "content":  "@{application/json=}"
+                                                                                 },
+                                                                         "422":  {
+                                                                                     "description":  "Validation Error",
+                                                                                     "content":  "@{application/json=}"
+                                                                                 }
+                                                                     }
+                                                   }
+                                      },
+                  "/v1/auth/login":  {
+                                         "post":  {
+                                                      "tags":  [
+                                                                   "auth"
+                                                               ],
+                                                      "summary":  "Login",
+                                                      "operationId":  "login_v1_auth_login_post",
+                                                      "requestBody":  {
+                                                                          "content":  {
+                                                                                          "application/json":  "@{schema=}"
+                                                                                      },
+                                                                          "required":  true
+                                                                      },
+                                                      "responses":  {
+                                                                        "200":  {
+                                                                                    "description":  "Successful Response",
+                                                                                    "content":  "@{application/json=}"
+                                                                                },
+                                                                        "422":  {
+                                                                                    "description":  "Validation Error",
+                                                                                    "content":  "@{application/json=}"
+                                                                                }
+                                                                    }
+                                                  }
+                                     },
+                  "/v1/auth/me":  {
+                                      "get":  {
+                                                  "tags":  [
+                                                               "auth"
+                                                           ],
+                                                  "summary":  "Me",
+                                                  "operationId":  "me_v1_auth_me_get",
+                                                  "parameters":  [
+                                                                     {
+                                                                         "name":  "authorization",
+                                                                         "in":  "query",
+                                                                         "required":  false,
+                                                                         "schema":  "@{anyOf=System.Object[]; title=Authorization}"
+                                                                     }
+                                                                 ],
+                                                  "responses":  {
+                                                                    "200":  {
+                                                                                "description":  "Successful Response",
+                                                                                "content":  "@{application/json=}"
+                                                                            },
+                                                                    "422":  {
+                                                                                "description":  "Validation Error",
+                                                                                "content":  "@{application/json=}"
+                                                                            }
+                                                                }
+                                              }
+                                  },
+                  "/v1/natal/compute":  {
+                                            "post":  {
+                                                         "tags":  [
+                                                                      "natal"
+                                                                  ],
+                                                         "summary":  "Compute Natal",
+                                                         "operationId":  "compute_natal_v1_natal_compute_post",
+                                                         "requestBody":  {
+                                                                             "content":  {
+                                                                                             "application/json":  "@{schema=}"
+                                                                                         },
+                                                                             "required":  true
+                                                                         },
+                                                         "responses":  {
+                                                                           "200":  {
+                                                                                       "description":  "Successful Response",
+                                                                                       "content":  "@{application/json=}"
+                                                                                   },
+                                                                           "422":  {
+                                                                                       "description":  "Validation Error",
+                                                                                       "content":  "@{application/json=}"
+                                                                                   }
+                                                                       }
+                                                     }
+                                        },
+                  "/v1/transit/now":  {
+                                          "get":  {
+                                                      "tags":  [
+                                                                   "transit"
+                                                               ],
+                                                      "summary":  "Transit Now",
+                                                      "operationId":  "transit_now_v1_transit_now_get",
+                                                      "parameters":  [
+                                                                         {
+                                                                             "name":  "lat",
+                                                                             "in":  "query",
+                                                                             "required":  false,
+                                                                             "schema":  "@{type=number; default=13.8591; title=Lat}"
+                                                                         },
+                                                                         {
+                                                                             "name":  "lon",
+                                                                             "in":  "query",
+                                                                             "required":  false,
+                                                                             "schema":  "@{type=number; default=100.5217; title=Lon}"
+                                                                         },
+                                                                         {
+                                                                             "name":  "tz",
+                                                                             "in":  "query",
+                                                                             "required":  false,
+                                                                             "schema":  "@{type=number; default=7.0; title=Tz}"
+                                                                         }
+                                                                     ],
+                                                      "responses":  {
+                                                                        "200":  {
+                                                                                    "description":  "Successful Response",
+                                                                                    "content":  "@{application/json=}"
+                                                                                },
+                                                                        "422":  {
+                                                                                    "description":  "Validation Error",
+                                                                                    "content":  "@{application/json=}"
+                                                                                }
+                                                                    }
+                                                  }
+                                      },
+                  "/v1/synastry/cross-aspects":  {
+                                                     "post":  {
+                                                                  "tags":  [
+                                                                               "synastry"
+                                                                           ],
+                                                                  "summary":  "Cross Aspects",
+                                                                  "operationId":  "cross_aspects_v1_synastry_cross_aspects_post",
+                                                                  "requestBody":  {
+                                                                                      "content":  {
+                                                                                                      "application/json":  "@{schema=}"
+                                                                                                  },
+                                                                                      "required":  true
+                                                                                  },
+                                                                  "responses":  {
+                                                                                    "200":  {
+                                                                                                "description":  "Successful Response",
+                                                                                                "content":  "@{application/json=}"
+                                                                                            },
+                                                                                    "422":  {
+                                                                                                "description":  "Validation Error",
+                                                                                                "content":  "@{application/json=}"
+                                                                                            }
+                                                                                }
+                                                              }
+                                                 },
+                  "/v1/branches/list":  {
+                                            "get":  {
+                                                        "tags":  [
+                                                                     "branches"
+                                                                 ],
+                                                        "summary":  "List Branches",
+                                                        "operationId":  "list_branches_v1_branches_list_get",
+                                                        "responses":  {
+                                                                          "200":  {
+                                                                                      "description":  "Successful Response",
+                                                                                      "content":  "@{application/json=}"
+                                                                                  }
+                                                                      }
+                                                    }
+                                        },
+                  "/v1/branches/{slug}":  {
+                                              "get":  {
+                                                          "tags":  [
+                                                                       "branches"
+                                                                   ],
+                                                          "summary":  "Get Branch",
+                                                          "operationId":  "get_branch_v1_branches__slug__get",
+                                                          "parameters":  [
+                                                                             {
+                                                                                 "name":  "slug",
+                                                                                 "in":  "path",
+                                                                                 "required":  true,
+                                                                                 "schema":  "@{type=string; title=Slug}"
+                                                                             }
+                                                                         ],
+                                                          "responses":  {
+                                                                            "200":  {
+                                                                                        "description":  "Successful Response",
+                                                                                        "content":  "@{application/json=}"
+                                                                                    },
+                                                                            "422":  {
+                                                                                        "description":  "Validation Error",
+                                                                                        "content":  "@{application/json=}"
+                                                                                    }
+                                                                        }
+                                                      }
+                                          },
+                  "/v1/payments/checkout":  {
+                                                "post":  {
+                                                             "tags":  [
+                                                                          "payments"
+                                                                      ],
+                                                             "summary":  "Checkout",
+                                                             "operationId":  "checkout_v1_payments_checkout_post",
+                                                             "parameters":  [
+                                                                                {
+                                                                                    "name":  "authorization",
+                                                                                    "in":  "query",
+                                                                                    "required":  false,
+                                                                                    "schema":  "@{type=string; default=; title=Authorization}"
+                                                                                }
+                                                                            ],
+                                                             "requestBody":  {
+                                                                                 "required":  true,
+                                                                                 "content":  {
+                                                                                                 "application/json":  "@{schema=}"
+                                                                                             }
+                                                                             },
+                                                             "responses":  {
+                                                                               "200":  {
+                                                                                           "description":  "Successful Response",
+                                                                                           "content":  "@{application/json=}"
+                                                                                       },
+                                                                               "422":  {
+                                                                                           "description":  "Validation Error",
+                                                                                           "content":  "@{application/json=}"
+                                                                                       }
+                                                                           }
+                                                         }
+                                            },
+                  "/v1/notifications/preferences":  {
+                                                        "get":  {
+                                                                    "tags":  [
+                                                                                 "notifications"
+                                                                             ],
+                                                                    "summary":  "Get Preferences",
+                                                                    "operationId":  "get_preferences_v1_notifications_preferences_get",
+                                                                    "responses":  {
+                                                                                      "200":  {
+                                                                                                  "description":  "Successful Response",
+                                                                                                  "content":  "@{application/json=}"
+                                                                                              }
+                                                                                  }
+                                                                },
+                                                        "post":  {
+                                                                     "tags":  [
+                                                                                  "notifications"
+                                                                              ],
+                                                                     "summary":  "Set Preferences",
+                                                                     "operationId":  "set_preferences_v1_notifications_preferences_post",
+                                                                     "requestBody":  {
+                                                                                         "content":  {
+                                                                                                         "application/json":  "@{schema=}"
+                                                                                                     },
+                                                                                         "required":  true
+                                                                                     },
+                                                                     "responses":  {
+                                                                                       "200":  {
+                                                                                                   "description":  "Successful Response",
+                                                                                                   "content":  "@{application/json=}"
+                                                                                               },
+                                                                                       "422":  {
+                                                                                                   "description":  "Validation Error",
+                                                                                                   "content":  "@{application/json=}"
+                                                                                               }
+                                                                                   }
+                                                                 }
+                                                    }
+              },
+    "components":  {
+                       "schemas":  {
+                                       "BodyPosition":  {
+                                                            "properties":  {
+                                                                               "body":  {
+                                                                                            "type":  "string",
+                                                                                            "title":  "Body"
+                                                                                        },
+                                                                               "sign":  {
+                                                                                            "type":  "string",
+                                                                                            "title":  "Sign"
+                                                                                        },
+                                                                               "degree":  {
+                                                                                              "type":  "number",
+                                                                                              "title":  "Degree"
+                                                                                          },
+                                                                               "absolute_deg":  {
+                                                                                                    "type":  "number",
+                                                                                                    "title":  "Absolute Deg"
+                                                                                                }
+                                                                           },
+                                                            "type":  "object",
+                                                            "required":  [
+                                                                             "body",
+                                                                             "sign",
+                                                                             "degree",
+                                                                             "absolute_deg"
+                                                                         ],
+                                                            "title":  "BodyPosition"
+                                                        },
+                                       "Body_cross_aspects_v1_synastry_cross_aspects_post":  {
+                                                                                                 "properties":  {
+                                                                                                                    "a":  {
+                                                                                                                              "$ref":  "#/components/schemas/ChartRequest"
+                                                                                                                          },
+                                                                                                                    "b":  {
+                                                                                                                              "$ref":  "#/components/schemas/ChartRequest"
+                                                                                                                          }
+                                                                                                                },
+                                                                                                 "type":  "object",
+                                                                                                 "required":  [
+                                                                                                                  "a",
+                                                                                                                  "b"
+                                                                                                              ],
+                                                                                                 "title":  "Body_cross_aspects_v1_synastry_cross_aspects_post"
+                                                                                             },
+                                       "ChartRequest":  {
+                                                            "properties":  {
+                                                                               "name":  {
+                                                                                            "type":  "string",
+                                                                                            "maxLength":  120,
+                                                                                            "minLength":  1,
+                                                                                            "title":  "Name"
+                                                                                        },
+                                                                               "date":  {
+                                                                                            "type":  "string",
+                                                                                            "format":  "date",
+                                                                                            "title":  "Date"
+                                                                                        },
+                                                                               "time":  {
+                                                                                            "type":  "string",
+                                                                                            "format":  "time",
+                                                                                            "title":  "Time"
+                                                                                        },
+                                                                               "tz_offset_hours":  {
+                                                                                                       "type":  "number",
+                                                                                                       "maximum":  14.0,
+                                                                                                       "minimum":  -12.0,
+                                                                                                       "title":  "Tz Offset Hours",
+                                                                                                       "default":  7.0
+                                                                                                   },
+                                                                               "lat":  {
+                                                                                           "type":  "number",
+                                                                                           "maximum":  90.0,
+                                                                                           "minimum":  -90.0,
+                                                                                           "title":  "Lat",
+                                                                                           "default":  13.8591
+                                                                                       },
+                                                                               "lon":  {
+                                                                                           "type":  "number",
+                                                                                           "maximum":  180.0,
+                                                                                           "minimum":  -180.0,
+                                                                                           "title":  "Lon",
+                                                                                           "default":  100.5217
+                                                                                       },
+                                                                               "system":  {
+                                                                                              "type":  "string",
+                                                                                              "pattern":  "^(tropical|sidereal)$",
+                                                                                              "title":  "System",
+                                                                                              "default":  "tropical"
+                                                                                          }
+                                                                           },
+                                                            "type":  "object",
+                                                            "required":  [
+                                                                             "name",
+                                                                             "date",
+                                                                             "time"
+                                                                         ],
+                                                            "title":  "ChartRequest"
+                                                        },
+                                       "ChartResponse":  {
+                                                             "properties":  {
+                                                                                "name":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Name"
+                                                                                         },
+                                                                                "datetime_utc":  {
+                                                                                                     "type":  "string",
+                                                                                                     "title":  "Datetime Utc"
+                                                                                                 },
+                                                                                "system":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "System"
+                                                                                           },
+                                                                                "bodies":  {
+                                                                                               "items":  "@{$ref=#/components/schemas/BodyPosition}",
+                                                                                               "type":  "array",
+                                                                                               "title":  "Bodies"
+                                                                                           },
+                                                                                "ascendant":  {
+                                                                                                  "$ref":  "#/components/schemas/BodyPosition"
+                                                                                              }
+                                                                            },
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "name",
+                                                                              "datetime_utc",
+                                                                              "system",
+                                                                              "bodies",
+                                                                              "ascendant"
+                                                                          ],
+                                                             "title":  "ChartResponse"
+                                                         },
+                                       "HTTPValidationError":  {
+                                                                   "properties":  {
+                                                                                      "detail":  {
+                                                                                                     "items":  "@{$ref=#/components/schemas/ValidationError}",
+                                                                                                     "type":  "array",
+                                                                                                     "title":  "Detail"
+                                                                                                 }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "title":  "HTTPValidationError"
+                                                               },
+                                       "LoginIn":  {
+                                                       "properties":  {
+                                                                          "email":  {
+                                                                                        "type":  "string",
+                                                                                        "title":  "Email"
+                                                                                    },
+                                                                          "password":  {
+                                                                                           "type":  "string",
+                                                                                           "title":  "Password"
+                                                                                       }
+                                                                      },
+                                                       "type":  "object",
+                                                       "required":  [
+                                                                        "email",
+                                                                        "password"
+                                                                    ],
+                                                       "title":  "LoginIn"
+                                                   },
+                                       "Preferences":  {
+                                                           "properties":  {
+                                                                              "daily_transit":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "title":  "Daily Transit",
+                                                                                                    "default":  true
+                                                                                                },
+                                                                              "transit_time":  {
+                                                                                                   "type":  "string",
+                                                                                                   "title":  "Transit Time",
+                                                                                                   "default":  "08:00"
+                                                                                               },
+                                                                              "tz_offset_hours":  {
+                                                                                                      "type":  "number",
+                                                                                                      "title":  "Tz Offset Hours",
+                                                                                                      "default":  7.0
+                                                                                                  }
+                                                                          },
+                                                           "type":  "object",
+                                                           "title":  "Preferences"
+                                                       },
+                                       "SignupIn":  {
+                                                        "properties":  {
+                                                                           "email":  {
+                                                                                         "type":  "string",
+                                                                                         "title":  "Email"
+                                                                                     },
+                                                                           "password":  {
+                                                                                            "type":  "string",
+                                                                                            "title":  "Password"
+                                                                                        },
+                                                                           "full_name":  {
+                                                                                             "anyOf":  " ",
+                                                                                             "title":  "Full Name"
+                                                                                         }
+                                                                       },
+                                                        "type":  "object",
+                                                        "required":  [
+                                                                         "email",
+                                                                         "password"
+                                                                     ],
+                                                        "title":  "SignupIn"
+                                                    },
+                                       "StripeCheckoutRequest":  {
+                                                                     "properties":  {
+                                                                                        "price_id":  {
+                                                                                                         "type":  "string",
+                                                                                                         "title":  "Price Id"
+                                                                                                     },
+                                                                                        "success_url":  {
+                                                                                                            "type":  "string",
+                                                                                                            "title":  "Success Url"
+                                                                                                        },
+                                                                                        "cancel_url":  {
+                                                                                                           "type":  "string",
+                                                                                                           "title":  "Cancel Url"
+                                                                                                       },
+                                                                                        "customer_email":  {
+                                                                                                               "type":  "string",
+                                                                                                               "title":  "Customer Email"
+                                                                                                           }
+                                                                                    },
+                                                                     "type":  "object",
+                                                                     "required":  [
+                                                                                      "price_id",
+                                                                                      "success_url",
+                                                                                      "cancel_url",
+                                                                                      "customer_email"
+                                                                                  ],
+                                                                     "title":  "StripeCheckoutRequest"
+                                                                 },
+                                       "TokenOut":  {
+                                                        "properties":  {
+                                                                           "access_token":  {
+                                                                                                "type":  "string",
+                                                                                                "title":  "Access Token"
+                                                                                            },
+                                                                           "token_type":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Token Type",
+                                                                                              "default":  "bearer"
+                                                                                          },
+                                                                           "user":  {
+                                                                                        "anyOf":  " ",
+                                                                                        "title":  "User"
+                                                                                    },
+                                                                           "plan":  {
+                                                                                        "anyOf":  " ",
+                                                                                        "title":  "Plan"
+                                                                                    }
+                                                                       },
+                                                        "type":  "object",
+                                                        "required":  [
+                                                                         "access_token"
+                                                                     ],
+                                                        "title":  "TokenOut"
+                                                    },
+                                       "ValidationError":  {
+                                                               "properties":  {
+                                                                                  "loc":  {
+                                                                                              "items":  "@{anyOf=System.Object[]}",
+                                                                                              "type":  "array",
+                                                                                              "title":  "Location"
+                                                                                          },
+                                                                                  "msg":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Message"
+                                                                                          },
+                                                                                  "type":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Error Type"
+                                                                                           },
+                                                                                  "input":  {
+                                                                                                "title":  "Input"
+                                                                                            },
+                                                                                  "ctx":  {
+                                                                                              "type":  "object",
+                                                                                              "title":  "Context"
+                                                                                          }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "loc",
+                                                                                "msg",
+                                                                                "type"
+                                                                            ],
+                                                               "title":  "ValidationError"
+                                                           }
+                                   }
+                   }
+}

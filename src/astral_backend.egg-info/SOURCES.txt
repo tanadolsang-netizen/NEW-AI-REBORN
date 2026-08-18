@@ -9,12 +9,15 @@ src/astral_backend.egg-info/top_level.txt
 src/integrations/stripe_client.py
 src/integrations/supabase_client.py
 src/models/chart.py
+src/routers/auth.py
 src/routers/branches.py
 src/routers/health.py
 src/routers/natal.py
+src/routers/notifications.py
 src/routers/payments.py
 src/routers/synastry.py
 src/routers/transit.py
 src/services/chart_service.py
 src/services/ephemeris.py
+src/services/push_service.py
 src/services/transit_service.py
