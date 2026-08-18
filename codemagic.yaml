@@ -44,11 +44,11 @@ workflows:
         script: |
           xcodebuild -resolvePackageDependencies \
             -project frontend/ios/App/App.xcodeproj \
-            -scheme App
+            -target App
       - name: Build and archive
         script: |
           xcodebuild -project frontend/ios/App/App.xcodeproj \
-            -scheme App \
+            -target App \
             -configuration Release \
             -archivePath frontend/ios/App/build/App.xcarchive \
             -destination "generic/platform=iOS" \
