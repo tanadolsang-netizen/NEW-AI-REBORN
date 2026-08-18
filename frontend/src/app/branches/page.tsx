@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { apiPath } from "@/lib/api";
 
 type Branch = { name: string; [key: string]: unknown };
 type BranchesResponse = { branches: Branch[] };
@@ -13,7 +14,7 @@ export default function BranchesPage() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch("/api/branches/list", { cache: "no-store" });
+        const res = await fetch(apiPath("/branches/list"), { cache: "no-store" });
         const data = (await res.json()) as BranchesResponse;
         if (!cancelled) setBranches(data.branches);
       } catch {

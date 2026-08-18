@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { apiPath } from "@/lib/api";
 
 type ChartResponse = {
   name: string;
@@ -57,7 +58,7 @@ export default function SynastryPage() {
       b: person("b"),
     };
     try {
-      const res = await fetch("/api/synastry/cross-aspects", {
+      const res = await fetch(apiPath("/synastry/cross-aspects"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

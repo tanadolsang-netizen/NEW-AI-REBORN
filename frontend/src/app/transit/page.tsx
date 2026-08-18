@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { apiPath } from "@/lib/api";
 
 type TransitBody = {
   body: string;
@@ -33,7 +34,7 @@ export default function TransitPage() {
     params.set("lat", String(fd.get("lat") || 13.8591));
     params.set("lon", String(fd.get("lon") || 100.5217));
     try {
-      const res = await fetch(`/api/transit/now?${params.toString()}`, { cache: "no-store" });
+      const res = await fetch(`${apiPath("/transit/now")}?${params.toString()}`, { cache: "no-store" });
       const data = (await res.json()) as TransitResponse;
       setResult(data);
     } catch (err: unknown) {

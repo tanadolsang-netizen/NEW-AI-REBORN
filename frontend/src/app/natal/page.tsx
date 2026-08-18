@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { apiPath } from "@/lib/api";
 
 type Body = { body: string; sign: string; degree: number };
 type ChartResponse = {
@@ -32,7 +33,7 @@ export default function NatalPage() {
       system: String(fd.get("system") || "tropical"),
     };
     try {
-      const res = await fetch("/api/natal/compute", {
+      const res = await fetch(apiPath("/natal/compute"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

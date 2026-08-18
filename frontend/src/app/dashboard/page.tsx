@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { apiPath } from "@/lib/api";
 
 type RecentChart = { name: string; datetime_utc: string; system: string };
 
@@ -52,7 +53,7 @@ export default function DashboardPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/dashboard/recent", {
+      const res = await fetch(apiPath("/dashboard/recent"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ limit: 5 }),
@@ -71,7 +72,7 @@ export default function DashboardPage() {
     (async () => {
       try {
         const params = new URLSearchParams({ tz: "7", lat: "13.8591", lon: "100.5217" });
-        const res = await fetch(`/api/transit/now?${params.toString()}`, { cache: "no-store" });
+        const res = await fetch(`${apiPath("/transit/now")}?${params.toString()}`, { cache: "no-store" });
         const data = (await res.json()) as TransitResponse;
         if (!cancelled) setTransit(data);
       } catch {
