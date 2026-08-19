@@ -12,7 +12,7 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import natal, transit, synastry, branches, payments, health, auth, notifications, dashboard
+from .routers import natal, transit, synastry, branches, payments, health, auth, notifications, dashboard, memory
 from .integrations.supabase_client import init_supabase
 from .integrations.stripe_client import init_stripe
 
@@ -56,3 +56,4 @@ app.include_router(branches.router, prefix="/v1/branches", tags=["branches"])
 app.include_router(dashboard.router, prefix="/v1/dashboard", tags=["dashboard"])
 app.include_router(payments.router, prefix="/v1/payments", tags=["payments"])
 app.include_router(notifications.router, prefix="/v1/notifications", tags=["notifications"])
+app.include_router(memory.router, prefix="/v1/memory", tags=["memory"])

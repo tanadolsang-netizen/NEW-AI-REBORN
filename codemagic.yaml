@@ -82,3 +82,83 @@ workflows:
     artifacts:
       - frontend/ios/App/build/output/*.ipa
       - frontend/ios/App/build/App.xcarchive
+
+  flutter-android-build:
+    name: Flutter Android Build
+    max_build_duration: 30
+    environment:
+      flutter: stable
+    scripts:
+      - name: Get packages
+        working_directory: mobile
+        script: flutter pub get
+      - name: Build APK + AAB
+        working_directory: mobile
+        script: |
+          flutter build apk --release
+          flutter build appbundle --release
+    artifacts:
+      - mobile/build/app/outputs/**/*.apk
+      - mobile/build/app/outputs/**/*.aab
+
+  flutter-ios-build:
+    name: Flutter iOS Build
+    max_build_duration: 45
+    environment:
+      flutter: stable
+      xcode: "16.0"
+      vars:
+        APPLE_ID: $APPLE_ID
+        APPLE_PASSWORD: $APPLE_PASSWORD
+        FASTLANE_USER: $APPLE_ID
+        FASTLANE_PASSWORD: $APPLE_PASSWORD
+    scripts:
+      - name: Get packages
+        working_directory: mobile
+        script: flutter pub get
+      - name: Flutter build (generates Xcode config, unsigned)
+        working_directory: mobile
+        script: flutter build ios --release --no-codesign
+      - name: Add Apple ID to keychain for signing
+        script: |
+          sudo xcodebuild -license accept 2>/dev/null || true
+          xcrun xcodebuild -addAppleID -appleId "$APPLE_ID" -password "$APPLE_PASSWORD" || true
+      - name: Resolve SPM packages
+        script: |
+          xcodebuild -resolvePackageDependencies \
+            -workspace mobile/ios/Runner.xcworkspace \
+            -scheme Runner
+      - name: Build and archive
+        script: |
+          xcodebuild -workspace mobile/ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath mobile/build/ios/archive/Runner.xcarchive \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates \
+            -allowProvisioningDeviceRegistration \
+            clean archive
+      - name: Export IPA
+        script: |
+          cat > /tmp/ExportOptions.plist << 'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>development</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath mobile/build/ios/archive/Runner.xcarchive \
+            -exportOptionsPlist /tmp/ExportOptions.plist \
+            -exportPath mobile/build/ios/output \
+            -allowProvisioningUpdates
+    artifacts:
+      - mobile/build/ios/output/*.ipa
+      - mobile/build/ios/archive/Runner.xcarchive
