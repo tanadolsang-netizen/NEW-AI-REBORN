@@ -57,7 +57,6 @@ workflows:
             -destination "generic/platform=iOS" \
             -allowProvisioningUpdates \
             -allowProvisioningDeviceRegistration \
-            DEVELOPMENT_TEAM=$ \
             clean archive
       - name: Export IPA
         script: |
@@ -68,8 +67,8 @@ workflows:
           <dict>
             <key>method</key>
             <string>development</string>
-            <key>teamID</key>
-            <string>$</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
             <key>uploadSymbols</key>
             <true/>
           </dict>
@@ -78,7 +77,8 @@ workflows:
           xcodebuild -exportArchive \
             -archivePath frontend/ios/App/build/App.xcarchive \
             -exportOptionsPlist /tmp/ExportOptions.plist \
-            -exportPath frontend/ios/App/build/output
+            -exportPath frontend/ios/App/build/output \
+            -allowProvisioningUpdates
     artifacts:
       - frontend/ios/App/build/output/*.ipa
       - frontend/ios/App/build/App.xcarchive
