@@ -75,7 +75,8 @@ def test_branches_rejects_path_traversal():
     assert res.status_code == 404
 
 
-def test_dashboard_recent():
+def test_dashboard_recent_requires_auth():
+    # /recent now serves the caller's own saved charts out of public.charts
+    # rather than a fixed demo list, so anonymous access must be rejected.
     res = client.post("/v1/dashboard/recent", json={"limit": 2})
-    assert res.status_code == 200
-    assert len(res.json()["recent"]) == 2
+    assert res.status_code == 401

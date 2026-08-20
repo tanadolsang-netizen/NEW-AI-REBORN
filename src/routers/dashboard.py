@@ -1,35 +1,44 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, Header, HTTPException
+from pydantic import BaseModel, Field
+
+from src.integrations.supabase_client import User, get_current_user
+from src.services import chart_store
+from src.services.caveat import CAVEAT
 
 router = APIRouter()
 
 
+async def _require_user(authorization: str = Header(default="")) -> User:
+    try:
+        return await get_current_user(authorization)
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=401, detail="Unauthorized") from exc
+
+
 class RecentIn(BaseModel):
-    limit: int = 5
+    limit: int = Field(default=5, ge=0, le=50)
 
 
 class RecentItem(BaseModel):
+    id: str | None = None
     name: str
-    datetime_utc: str
+    date: str | None = None
+    time: str | None = None
     system: str
+    created_at: str | None = None
 
 
 class RecentOut(BaseModel):
     recent: list[RecentItem]
-
-
-_DEMO_RECENT = [
-    RecentItem(name="Somchai N.", datetime_utc="2026-08-14T09:12:00Z", system="tropical"),
-    RecentItem(name="Nira K.", datetime_utc="2026-08-12T22:40:00Z", system="sidereal"),
-    RecentItem(name="Ploy S.", datetime_utc="2026-08-09T03:05:00Z", system="tropical"),
-    RecentItem(name="Anon T.", datetime_utc="2026-08-01T15:30:00Z", system="tropical"),
-    RecentItem(name="Kanya W.", datetime_utc="2026-07-28T11:50:00Z", system="sidereal"),
-]
+    caveat: str
 
 
 @router.post("/recent", response_model=RecentOut)
-async def recent(payload: RecentIn) -> RecentOut:
-    # Stub: replace with a real per-user query once chart persistence is wired
-    # up (no charts table exists yet — see src/integrations/supabase_client.py).
-    limit = max(0, payload.limit)
-    return RecentOut(recent=_DEMO_RECENT[:limit])
+async def recent(payload: RecentIn, user: User = Depends(_require_user)) -> RecentOut:
+    try:
+        rows = chart_store.list_recent(user.id, payload.limit)
+    except RuntimeError as exc:
+        # Supabase unconfigured (local dev): surface it rather than serving
+        # fabricated rows that look like real history.
+        raise HTTPException(status_code=503, detail="Chart storage unavailable") from exc
+    return RecentOut(recent=[RecentItem(**row) for row in rows], caveat=CAVEAT)
