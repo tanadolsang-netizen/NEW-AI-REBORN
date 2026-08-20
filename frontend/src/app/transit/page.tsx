@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { apiPath } from "@/lib/api";
 
 type TransitBody = {
@@ -35,10 +36,11 @@ export default function TransitPage() {
     params.set("lon", String(fd.get("lon") || 100.5217));
     try {
       const res = await fetch(`${apiPath("/transit/now")}?${params.toString()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`โหลดทรานซิตไม่สำเร็จ (${res.status})`);
       const data = (await res.json()) as TransitResponse;
       setResult(data);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "transit failed");
+      setError(err instanceof Error ? err.message : "โหลดทรานซิตไม่สำเร็จ");
     } finally {
       setLoading(false);
     }
@@ -46,14 +48,25 @@ export default function TransitPage() {
 
   return (
     <div className="mx-auto w-full max-w-xl flex-1 px-6 py-12">
-      <h1 className="text-2xl font-semibold tracking-tight text-foreground">Transit Now</h1>
-      <p className="mt-2 text-muted">Get current transit positions.</p>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <span className="pill">ทรานซิต · Transit</span>
+        <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight">
+          ท้องฟ้า<span className="text-neon">ตอนนี้</span>
+        </h1>
+        <p className="mt-2 text-muted">ดูตำแหน่งดาวเคราะห์ ณ วินาทีนี้ จากสถานที่ที่คุณระบุ</p>
+      </motion.div>
 
-      <form onSubmit={compute} className="mt-6 grid grid-cols-2 gap-3">
+      <motion.form
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        onSubmit={compute}
+        className="card mt-6 grid grid-cols-2 gap-3 p-6"
+      >
         {[
-          ["tz", "TZ Offset (hrs)", "number"],
-          ["lat", "Latitude", "number"],
-          ["lon", "Longitude", "number"],
+          ["tz", "เขตเวลา (ชม.)", "number"],
+          ["lat", "ละติจูด", "number"],
+          ["lon", "ลองจิจูด", "number"],
         ].map(([name, label, type]) => (
           <label key={name} className="flex flex-col gap-1 text-sm">
             <span className="text-muted">{label}</span>
@@ -68,32 +81,32 @@ export default function TransitPage() {
           </label>
         ))}
         <button type="submit" disabled={loading} className="btn-primary col-span-2 mt-2">
-          {loading ? "Loading..." : "Get Transit"}
+          {loading ? "กำลังโหลด…" : "ดูทรานซิต"}
         </button>
-      </form>
+      </motion.form>
 
-      {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+      {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
 
       {result && (
-        <div className="card mt-6 p-5">
-          <h2 className="text-lg font-medium text-foreground">Now</h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="card mt-6 p-6"
+        >
+          <h2 className="text-lg font-medium">ตอนนี้ · Now</h2>
           <p className="text-xs text-muted">{result.now_utc}</p>
-          <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <p className="font-medium text-foreground">Bodies</p>
-              <ul className="mt-1 space-y-1">
-                {result.bodies.map((b) => (
-                  <li key={b.body} className="flex justify-between text-foreground">
-                    <span>{b.body}</span>
-                    <span className="text-muted">
-                      {b.sign} ({b.degree.toFixed(2)}){b.is_retrograde ? " R" : ""}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+          <ul className="mt-3 space-y-1.5 text-sm">
+            {result.bodies.map((b) => (
+              <li key={b.body} className="flex justify-between">
+                <span>{b.body}</span>
+                <span className="text-muted">
+                  {b.sign} ({b.degree.toFixed(2)}°){b.is_retrograde ? " R" : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
       )}
     </div>
   );

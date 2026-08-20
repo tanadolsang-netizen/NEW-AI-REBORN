@@ -29,7 +29,7 @@ const COPY = {
 export default function ThaiZodiacWidget() {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear - 25);
-  const [lang, setLang] = useState<Lang>("en");
+  const [lang, setLang] = useState<Lang>("th");
 
   const animal = useMemo(() => thaiZodiacForYear(year), [year]);
   const t = COPY[lang];
